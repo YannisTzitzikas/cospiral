@@ -23,7 +23,7 @@ import utils.SyntheticDataGenerator;
  * @author Yannis Tzitzikas (tzitzik@ics.forth.gr)
  * @author Manos Chatzakis (additions - chatzakis@ics.forth.gr)
  * This class contains examples to create CoSpi layouts.
- * Status: ongoing
+ * Status: Ongoing just for testing   
  *
  */
 public class CoSpiExamples {
@@ -258,6 +258,7 @@ public class CoSpiExamples {
 		    //comparisonExamples();
 			//runAndOpenSVGExamples(); //filepath in generator should be changed.
 			//zeroMinExamples();
+		    
 		}
 		catch(Exception e) {e.printStackTrace();}
 	}

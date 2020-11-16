@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 
 /**
  * @author Manos Chatzakis (chatzakis@ics.forth.gr)
+ * @author Yannis Tzitzikas (yannistzitzikas@gmail.com): A few additions.
  * This class contains frame utilities to be used for the CoSpi application.
  *
  */
@@ -60,7 +61,7 @@ public class GUIUtilities {
 			
 		
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("./Resources")); // for opening the
+		fileChooser.setCurrentDirectory(new File("./Resources")); // for opening the folder Resources that has examples
 		
 		fileChooser.setDialogTitle("Select a file");
 		int userSelection = fileChooser.showSaveDialog(null);

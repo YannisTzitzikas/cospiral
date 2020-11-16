@@ -1,4 +1,4 @@
-This version of code containts the GUI version of the CoSpi algorithm.
+This version of code contains the GUI version of the CoSpi algorithm.
 It also contains methods for adding labels and info to visualizations.
 A new CoSpi svg generator is added, creating an HTML page.
 Thus, there are some technical differences compared to the backend source code.

@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -49,6 +50,17 @@ public class CoSpiGUI extends JFrame{
 	 * Creates the menu bar and runs the app.
 	 */
 	public CoSpiGUI() {
+		// ICON 
+		ImageIcon icon;
+		String path = "/Image.png";
+		java.net.URL imgURL = getClass().getResource(path);
+		System.out.println(getClass());
+		if (imgURL != null) {
+			icon = new ImageIcon(imgURL, "Eikonidio"); //imgURL
+			this.setIconImage(icon.getImage());
+		} else {
+			System.err.println("Couldn't find file: " + path);
+		}
 		
 		//int RESOLUTION = Integer.parseInt(JOptionPane.showInputDialog(new Frame("Resolution Selection"),"Visualization Resolution(normally 1000):"));  
 		//CoSpi.N = RESOLUTION;
@@ -107,11 +119,16 @@ public class CoSpiGUI extends JFrame{
 	 * @param menu
 	 */
 	public void createProjectMenu(JMenuBar menu) {
-		JMenu projectMenu = new JMenu("Project");
+		JMenu projectMenu = new JMenu("File");
 		projectMenu.setMnemonic('P');
-		JMenu newFile = new JMenu("Visualize Dataset");
-		JMenuItem classic = new JMenuItem("Classic");
-		JMenuItem pieChart = new JMenuItem("Pie Chart");
+		JMenu newFile = new JMenu("Open");
+		JMenuItem classic = new JMenuItem("Classic (to visualize one column)");
+		classic.setToolTipText("to become available soon");
+		
+		
+		JMenuItem pieChart = new JMenuItem("Pie Chart (to visualize two columns");
+		pieChart.setToolTipText("to become available soon");
+		
 		classic.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	fileConf = new FileConf(0,1,false,GUIUtilities.fileSelectionGUI());
@@ -143,7 +160,7 @@ public class CoSpiGUI extends JFrame{
 		/*
 		 * Creating mode menu
 		 */
-		JMenu mode     	  = new JMenu("Mode");
+		JMenu mode     	  = new JMenu("Spiral Style");
 		//JMenuItem classic = new JMenuItem("Classic");
 		JCheckBoxMenuItem classic = new JCheckBoxMenuItem("Classic",true);
 		JCheckBoxMenuItem ring    = new JCheckBoxMenuItem("Ring",false);
@@ -167,7 +184,7 @@ public class CoSpiGUI extends JFrame{
 		/*
 		 * Creating draw menu
 		 */
-		JMenu shapeDrawStyle = new JMenu("Draw");
+		JMenu shapeDrawStyle = new JMenu("Fill Mode");
 		JCheckBoxMenuItem filled     = new JCheckBoxMenuItem("Filled",true);
 		JCheckBoxMenuItem outline    = new JCheckBoxMenuItem("OutLine",false);
 		filled.addActionListener(new ActionListener() {
@@ -190,7 +207,7 @@ public class CoSpiGUI extends JFrame{
 		/*
 		 * Creating direction style
 		 */
-		JMenu directionStyle = new JMenu("Direction");
+		JMenu directionStyle = new JMenu("Spiral Direction");
 		JCheckBoxMenuItem expand     = new JCheckBoxMenuItem("Expanding",true);
 		JCheckBoxMenuItem shrink     = new JCheckBoxMenuItem("Shrinking",false);
 		expand.addActionListener(new ActionListener() {
@@ -227,7 +244,7 @@ public class CoSpiGUI extends JFrame{
 		/*
 		 * Creating parameters menu
 		 */
-		JMenuItem parameters = new JMenuItem("Parameters..");
+		JMenuItem parameters = new JMenuItem("Other Parameters..");
 		parameters.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	setLayoutParameters();
@@ -246,7 +263,7 @@ public class CoSpiGUI extends JFrame{
 	 * @param menu
 	 */
 	public void createDatasetMenu(JMenuBar menu) {
-		JMenu datasetMenu = new JMenu("Dataset");
+		JMenu datasetMenu = new JMenu("Labels and Axes");
 		datasetMenu.setMnemonic('D');
 		createLabelMenu(datasetMenu);
 		createAxesMenu(datasetMenu);
@@ -260,7 +277,7 @@ public class CoSpiGUI extends JFrame{
 	 */
 	public void createLabelMenu(JMenu cMenu) {
 		
-		JMenu labels = new JMenu("Tags");
+		JMenu labels = new JMenu("Labels");
 		JMenu show = new JMenu("Visibilty");
 		
 		JCheckBoxMenuItem disableLabel = new JCheckBoxMenuItem("Disabled",true);
@@ -651,13 +668,15 @@ public class CoSpiGUI extends JFrame{
 	public void columnParametersClassic() {
 		JFrame win = new JFrame("ColumnSelection");
 		win.setResizable(false);
-		win.setBounds(700,0,220,120);
+		win.setBounds(700,0,320,120); // x,y,widht, height
 		setLayout(new FlowLayout());
-		JLabel nameCol = new JLabel( " Name column: ");
-		JLabel valCol = new JLabel( " Value column: ");
-		JLabel mes = new JLabel( " Click to begin: ");
+		JLabel nameCol = new JLabel( " Column with Names: ");
+		JLabel valCol =  new JLabel( " Column with Values: ");
+		JLabel mes = new JLabel( " ");
 		JTextField ntext = new JTextField("0");
+		ntext.setToolTipText("Use 0 for the first column");
 		JTextField vtext = new JTextField("1");
+		vtext.setToolTipText("Use 1 for the second column");
 		
 		JButton vis = new JButton("Visualize!");
 		JPanel p1 = new JPanel(new GridLayout(3,2));
@@ -691,15 +710,18 @@ public class CoSpiGUI extends JFrame{
 	public void columnParametersPieChart() {
 		JFrame win = new JFrame("ColumnSelection");
 		win.setResizable(false);
-		win.setBounds(700,0,220,120);
+		win.setBounds(700,0,320,120);
 		setLayout(new FlowLayout());
-		JLabel nameCol = new JLabel( " Name column: ");
-		JLabel valCol = new JLabel( " Value column: ");
-		JLabel gpcol = new JLabel( " Groupby column: ");
-		JLabel mes = new JLabel( " Click to begin: ");
+		JLabel nameCol = new JLabel( " Column with Names:  ");
+		JLabel valCol = new JLabel( "Column with Values: ");
+		JLabel gpcol = new JLabel( " Column with Groupby values: ");
+		JLabel mes = new JLabel( " ");
 		JTextField ntext = new JTextField("0");
+		ntext.setToolTipText("Use 0 for the first column");
 		JTextField gptext = new JTextField("1");
+		gptext.setToolTipText("Use 1 for the second column");
 		JTextField vtext = new JTextField("2");
+		vtext.setToolTipText("Use 2 for the third column");
 		
 		JButton vis = new JButton("Visualize!");
 		JPanel p1 = new JPanel(new GridLayout(4,2));
