@@ -55,7 +55,12 @@ public class GUIUtilities {
 	public static String fileSelectionGUI(){
 		String filepath="";
 		try {
+			
+		//java.net.URL imgURL = getClass().getResource(path);
+			
+		
 		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File("./Resources")); // for opening the
 		
 		fileChooser.setDialogTitle("Select a file");
 		int userSelection = fileChooser.showSaveDialog(null);
