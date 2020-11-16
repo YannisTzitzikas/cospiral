@@ -23,6 +23,7 @@ import utils.SyntheticDataGenerator;
  * @author Yannis Tzitzikas (tzitzik@ics.forth.gr)
  * @author Manos Chatzakis (additions - chatzakis@ics.forth.gr)
  * This class contains examples to create CoSpi layouts.
+ * Status: ongoing
  *
  */
 public class CoSpiExamples {
