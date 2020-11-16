@@ -3,11 +3,15 @@ package APP;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -40,11 +44,20 @@ import utils.SVGGenerator;
  */
 public class CoSpiGUI extends JFrame{
 	
-	int MAX; //Normilized max
-	int MIN; //Normilized min
+	int MAX; //Normalized max
+	int MIN; //Normalized min
 	
 	VisConfig conf    = new VisConfig(); //Visual Configurations
 	FileConf fileConf = new FileConf(0,1,2,true); //File Configurations
+	
+	boolean fileSelected = false;  // true if the user has selected a file (used for enabling/disabling menus).
+	
+	// menus
+	JMenu designMenu;
+	JMenu labelsAxesMenu;
+	JMenu exportMenu;
+	
+	
 	
 	/**
 	 * Creates the menu bar and runs the app.
@@ -96,7 +109,7 @@ public class CoSpiGUI extends JFrame{
 		conf.setAngleMax(2*Math.PI);
 		conf.setRoadSize(4);
 		conf.setAxes(Axes.NoAxes);
-		conf.setRectColor(Color.blue);
+		conf.setRectColor(Color.orange); // blue
 		conf.setEnableInfo(false);
 		conf.setLabelParams(false, false, false, Color.black, 4);
 		conf.setAllowOverlap(false);
@@ -109,7 +122,7 @@ public class CoSpiGUI extends JFrame{
 	public void createMenuBar(JMenuBar menu) {
 		createProjectMenu(menu);
 		createDesignMenu(menu);
-		createDatasetMenu(menu);
+		createLabelsAxesMenu(menu);
 		createExportMenu(menu);
 		createHelpMenu(menu);
 	}
@@ -122,18 +135,18 @@ public class CoSpiGUI extends JFrame{
 		JMenu projectMenu = new JMenu("File");
 		projectMenu.setMnemonic('P');
 		JMenu newFile = new JMenu("Open");
-		JMenuItem classic = new JMenuItem("Classic (to visualize one column)");
+		JMenuItem classic = new JMenuItem("Classic (to visualize two columns: name and value)");
 		classic.setToolTipText("to become available soon");
 		
 		
-		JMenuItem pieChart = new JMenuItem("Pie Chart (to visualize two columns");
+		JMenuItem pieChart = new JMenuItem("Pie Chart (to visualize three columns: name, value, group");
 		pieChart.setToolTipText("to become available soon");
 		
 		classic.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	fileConf = new FileConf(0,1,false,GUIUtilities.fileSelectionGUI());
             	columnParametersClassic();
-            	
+              	
          }});
 		
 		pieChart.addActionListener(new ActionListener() {
@@ -154,7 +167,7 @@ public class CoSpiGUI extends JFrame{
 	 * @param menu
 	 */
 	public void createDesignMenu(JMenuBar menu) {
-		JMenu designMenu     = new JMenu("Design");
+		designMenu     = new JMenu("Design");
 		designMenu.setMnemonic('D');
 		
 		/*
@@ -244,7 +257,7 @@ public class CoSpiGUI extends JFrame{
 		/*
 		 * Creating parameters menu
 		 */
-		JMenuItem parameters = new JMenuItem("Other Parameters..");
+		JMenuItem parameters = new JMenuItem("Other Parameters (Sizes, Colors, etc)");
 		parameters.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	setLayoutParameters();
@@ -256,21 +269,25 @@ public class CoSpiGUI extends JFrame{
 		designMenu.add(collisions);
 		designMenu.add(parameters);
 		menu.add(designMenu);
+				
+		designMenu.setEnabled(false); // disabled if the user has not selected a file
+		
 	}
 	
 	/**
 	 * Creates the dataset menu bar section.
 	 * @param menu
 	 */
-	public void createDatasetMenu(JMenuBar menu) {
-		JMenu datasetMenu = new JMenu("Labels and Axes");
-		datasetMenu.setMnemonic('D');
-		createLabelMenu(datasetMenu);
-		createAxesMenu(datasetMenu);
-		createInfoMenu(datasetMenu);
-		menu.add(datasetMenu);
+	public void createLabelsAxesMenu(JMenuBar menu) {
+		labelsAxesMenu = new JMenu("Labels and Axes");
+		labelsAxesMenu.setMnemonic('D');
+		createLabelMenu(labelsAxesMenu);
+		createAxesMenu(labelsAxesMenu);
+		createInfoMenu(labelsAxesMenu);
+		menu.add(labelsAxesMenu);
+		labelsAxesMenu.setEnabled(false); 
 	}
-	
+
 	/**
 	 * Creates the label menu bar section.
 	 * @param cMenu
@@ -463,7 +480,7 @@ public class CoSpiGUI extends JFrame{
 	 * @param menu
 	 */
 	public void createExportMenu(JMenuBar menu) {
-		JMenu exportMenu = new JMenu("Export");
+		exportMenu = new JMenu("Export");
 		
 		JMenuItem saveImage = new JMenuItem("Export as image..");
 		JMenuItem svgCreator = new JMenuItem("Generate SVG.."); 
@@ -491,6 +508,7 @@ public class CoSpiGUI extends JFrame{
 		
 		menu.add(exportMenu);
 	
+		exportMenu.setEnabled(false); // disabled if the user has not selected a file
 	}
 
 	/**
@@ -529,6 +547,16 @@ public class CoSpiGUI extends JFrame{
 		if(!fileConf.toBePieChart) {CoSpi.loadDataAndRun(fileConf.filename, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,true,false);}
 		else {CoSpi.loadDataAndRunPieChart(fileConf.filename, fileConf.groupingColumn, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,true,false);}
 		setContentPane(CoSpi.pic.getJLabel());
+		//SwingUtilities.updateComponentTreeUI(this);
+		
+		//ytz start
+		this.fileSelected = true; // a file has been loaded (ytz)
+		// enabling the other menus:
+		JMenu[] menus = { designMenu, labelsAxesMenu, exportMenu};
+		for (JMenu menu: menus)
+			if (menu!=null)
+				menu.setEnabled(true);
+		//ytz end
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
@@ -540,8 +568,8 @@ public class CoSpiGUI extends JFrame{
 		double [] possibleAngles = {0,Math.PI/2,Math.PI,3*Math.PI/2,2*Math.PI};		
 		String [] possibleAnglesDisplay = {"0","pi/2","pi","3p/2" };
 		
-		Color [] possibleColors = {Color.blue,Color.green,Color.red,Color.gray,Color.orange,Color.cyan,Color.yellow,Color.black};
-		String [] possibleColorsDisplay = {"Blue","Green","Red","Gray","Orange","Cyan","Yellow","Black"};
+		Color [] possibleColors = {Color.orange,Color.blue,Color.green,Color.red,Color.gray,Color.cyan,Color.yellow,Color.black};
+		String [] possibleColorsDisplay = {"Orange", "Blue","Green","Red","Gray","Cyan","Yellow","Black"};
 		
 		JFrame parFrame = new JFrame("Parameters");
 		parFrame.setResizable(false);
@@ -757,6 +785,7 @@ public class CoSpiGUI extends JFrame{
 	 * @param args
 	 */
 	public static void main(String [] args) {
+		AppWelcome t = new AppWelcome();
 		CoSpiGUI app = new CoSpiGUI();
 	}
 }
@@ -804,4 +833,44 @@ class FileConf{
 	}
 }
 
+/**
+ * 
+ * @author Yannis Tzitzikas (yannistzitzik@gmail.com)
+ * A splash screen
+ */
+class AppWelcome extends JFrame {
+	AppWelcome() {
+		Image image = null;
+	    try {
+	    	// Setting the image in the window
+	    	URL imgURL = getClass().getResource("/Image.png");
+	    	image = ImageIO.read(imgURL);
+	    	
+	    	// Setting the ICON 
+	 		ImageIcon icon =  new ImageIcon(imgURL, "Icon");
+ 			this.setIconImage(icon.getImage());
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	    //this.setSize(600, 300);
+	    this.setBounds(600, 300, 600, 300);  // setBounds(x, y, width, height) 
+	    this.getContentPane().setBackground( Color.white );
+	    this.setLayout(new GridLayout(0,2,0,0)); // rows, columns, int hgap, int vgap)
+	    this.add(new JLabel(new ImageIcon(image)));
+	    this.add(new JLabel("<html> <h1>COSPI v1.0 </h1> <br> by Yannis Tzitzikas<br> and Manos Chatzakis <br> Nov, 2020</html>"));
+	    this.setVisible(true);   
+	    try {
+	    Thread.sleep(3000);
+		dispose();
+	    } catch (Exception e) {
+	    	System.err.println(e);
+	    }
+		
+	}
+	public static void main(String[] args)
+	{     
+	    AppWelcome t = new AppWelcome();
+	}
+	
+}
 
