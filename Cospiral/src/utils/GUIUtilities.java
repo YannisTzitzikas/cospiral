@@ -61,10 +61,12 @@ public class GUIUtilities {
 			
 		
 		JFileChooser fileChooser = new JFileChooser();
-		fileChooser.setCurrentDirectory(new File("./Resources")); // for opening the folder Resources that has examples
+		fileChooser.setCurrentDirectory(new File("./Resources/DemoDatasets")); // for opening the folder Resources that has examples
 		
 		fileChooser.setDialogTitle("Select a file");
-		int userSelection = fileChooser.showSaveDialog(null);
+		//int userSelection = fileChooser.showSaveDialog(null);
+		int userSelection = fileChooser.showOpenDialog(null); // prevVersion: 		showSaveDialog(null);
+		
 		
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			File file = fileChooser.getSelectedFile();
