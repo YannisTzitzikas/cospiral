@@ -110,8 +110,8 @@ public class CoSpiGUI extends JFrame{
 		conf.setRoadSize(4);
 		conf.setAxes(Axes.NoAxes);
 		conf.setRectColor(Color.orange); // blue
-		conf.setEnableInfo(false);
-		conf.setLabelParams(false, false, false, Color.black, 4);
+		conf.setEnableInfo(true); 
+		conf.setLabelParams(false, true, true, Color.black, 4);  // rank,  name, val ,Color , decRate) {
 		conf.setAllowOverlap(false);
 	}
 
@@ -297,7 +297,7 @@ public class CoSpiGUI extends JFrame{
 		JMenu labels = new JMenu("Labels");
 		JMenu show = new JMenu("Visibilty");
 		
-		JCheckBoxMenuItem disableLabel = new JCheckBoxMenuItem("Disabled",true);
+		JCheckBoxMenuItem disableLabel = new JCheckBoxMenuItem("Disabled",false);// ytz: true htan
 		JCheckBoxMenuItem name     = new JCheckBoxMenuItem("Names",false);
 		JCheckBoxMenuItem value    = new JCheckBoxMenuItem("Values",false); 
 		JCheckBoxMenuItem rank  = new JCheckBoxMenuItem("Rank",false); 
