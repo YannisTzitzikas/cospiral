@@ -13,10 +13,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -567,10 +569,121 @@ public class CoSpiGUI extends JFrame{
 		SwingUtilities.updateComponentTreeUI(this);
 	}
 	
+	// new version
+	public void setLayoutParameters() {
+		// Creating the Frame
+		parFrame = new JFrame("Parameters");
+		parFrame.setSize(350,400);
+		parFrame.setBounds(1000,0,350,400);
+		parFrame.setLayout(new GridLayout(0,1,5,1)); // rows, columns, int hgap, int vgap)
+		
+		// Panel for Max Value
+		JPanel maxOperatorPanel = new JPanel(new GridLayout(0,3,5,5)); // rows, columns, int hgap, int vgap)
+		maxOperatorPanel.setBorder(BorderFactory.createTitledBorder(
+		        BorderFactory.createEtchedBorder(), "Max Value Size"));
+		JTextField maxText = new JTextField(String.valueOf(MAX));
+		JButton maxPlus  = new JButton("+");
+		JButton maxMinus = new JButton("-");
+		maxPlus.addActionListener( e->{maxText.setText(String.valueOf(((int)(Integer.parseInt(maxText.getText())*1.2))));});
+		maxMinus.addActionListener(e->{maxText.setText(String.valueOf(((int)(Integer.parseInt(maxText.getText())*0.8))));});
+		for (JComponent jc: new JComponent[] {maxText,maxPlus,maxMinus})
+			maxOperatorPanel.add(jc);
+		
+		// Panel for Min Value
+		JPanel minOperatorPanel = new JPanel(new GridLayout(0,3,5,5)); // rows, columns, int hgap, int vgap)
+		minOperatorPanel.setBorder(BorderFactory.createTitledBorder(
+		        BorderFactory.createEtchedBorder(), "Min Value Size"));
+		JTextField minText = new JTextField(String.valueOf(MIN));
+		JButton minPlus  = new JButton("+");
+		JButton minMinus = new JButton("-");
+		minPlus.addActionListener( e->{minText.setText(String.valueOf(1+((int)(Integer.parseInt(minText.getText())*1.5))));});
+		minMinus.addActionListener(e->{minText.setText(String.valueOf(((int)(Integer.parseInt(minText.getText())*0.5))));});
+		for (JComponent jc: new JComponent[]{minText,minPlus,minMinus})
+			minOperatorPanel.add(jc);
+			
+		// Panel for Roads
+		JPanel roadOperatorPanel = new JPanel(new GridLayout(0,3,5,5)); // rows, columns, int hgap, int vgap)
+		roadOperatorPanel.setBorder(BorderFactory.createTitledBorder(
+		        BorderFactory.createEtchedBorder(), "Road Size"));
+		JTextField roadText = new JTextField(String.valueOf(conf.getRoadSize()));
+		JButton roadPlus  = new JButton("+");
+		JButton roadMinus = new JButton("-");
+		roadPlus.addActionListener( e->{roadText.setText(String.valueOf(1+((int)(Integer.parseInt(roadText.getText())*1.5))));});
+		roadMinus.addActionListener(e->{roadText.setText(String.valueOf(((int)(Integer.parseInt(roadText.getText())*0.5))));});
+		for (JComponent jc: new JComponent[]{roadText,roadPlus,roadMinus})
+			roadOperatorPanel.add(jc);
+		
+		// Panel for Angles
+		JPanel anglesOperatorPanel = new JPanel(new GridLayout(0,3,5,5)); // rows, columns, int hgap, int vgap)
+		anglesOperatorPanel.setBorder(BorderFactory.createTitledBorder(
+		        BorderFactory.createEtchedBorder(), "Angles"));
+		double [] possibleAngles = {0,Math.PI/2,Math.PI,3*Math.PI/2,2*Math.PI};		
+		String [] possibleAnglesDisplay = {"0","pi/2","pi","3p/2" };
+		JComboBox minAngles = new JComboBox(possibleAnglesDisplay);
+		for (JComponent jc: new JComponent[]{roadText,roadPlus,roadMinus})
+			anglesOperatorPanel.add(minAngles);
+		
+		// Panel for Colors
+		JPanel colorOperatorPanel = new JPanel(new GridLayout(0,3,5,5)); // rows, columns, int hgap, int vgap)
+		colorOperatorPanel.setBorder(BorderFactory.createTitledBorder(
+		        BorderFactory.createEtchedBorder(), "Colors"));
+		Color [] possibleColors = {Color.orange,Color.blue,Color.green,Color.red,Color.gray,Color.cyan,Color.yellow,Color.black};
+		String [] possibleColorsDisplay = {"Orange", "Blue","Green","Red","Gray","Cyan","Yellow","Black"};
+		JComboBox colors = new JComboBox(possibleColorsDisplay);
+		colorOperatorPanel.add(colors);
+		
+		// Adding all Panels to the Frame
+		for (JPanel jp: new JPanel[]{ 	
+						maxOperatorPanel, 
+						minOperatorPanel,
+						roadOperatorPanel,
+						anglesOperatorPanel,
+						colorOperatorPanel}
+			)
+		  parFrame.add(jp);
+		parFrame.setVisible(true);
+		
+		// Adding the DEFAULT and APPLY buttons
+		JButton apply = new JButton("Apply");
+		JButton reset = new JButton("Default");
+		apply.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	MAX = Integer.parseInt(maxText.getText());
+            	MIN = Integer.parseInt(minText.getText());
+            	conf.setRoadSize(Integer.parseInt(roadText.getText()));
+            	conf.setAngleMin(possibleAngles[minAngles.getSelectedIndex()]);
+            	conf.setRectColor(possibleColors[colors.getSelectedIndex()]);
+            	visualizeOnFrame();
+            }});
+		reset.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	if(fileConf.toBePieChart) {
+            		MAX = 20;
+            		MIN = 5;
+            	}
+            	else{
+            		MAX = 30;
+            		MIN = 1;
+            	}
+            	//initializeConfig();
+            	visualizeOnFrame();
+            	maxText.setText(String.valueOf(MAX));
+            	minText.setText(String.valueOf(MIN));
+            	parFrame.setVisible(true);
+            }});
+		parFrame.add(apply);
+		parFrame.add(reset);
+		
+		// for opening again the frame from the menu
+		parFrame.addWindowListener(new WindowAdapter() {
+			  public void windowClosing(WindowEvent we) {  parFrame = null;  }
+		});
+	}
+	
 	/**
 	 * Simple GUI to change the layout parameters.
 	 */
-	public void setLayoutParameters() {
+	public void setLayoutParametersOLD() {
 		
 		double [] possibleAngles = {0,Math.PI/2,Math.PI,3*Math.PI/2,2*Math.PI};		
 		String [] possibleAnglesDisplay = {"0","pi/2","pi","3p/2" };
@@ -579,14 +692,15 @@ public class CoSpiGUI extends JFrame{
 		String [] possibleColorsDisplay = {"Orange", "Blue","Green","Red","Gray","Cyan","Yellow","Black"};
 		
 		parFrame = new JFrame("Parameters");
-		parFrame.setResizable(false);
-		parFrame.setSize(250,180);
-		parFrame.setBounds(1000,0,250,180);
+		int frameWidth=300;
+		parFrame.setResizable(true); // false before
+		parFrame.setSize(frameWidth,180);
+		parFrame.setBounds(1000,0,frameWidth,180);
 		setLayout(new FlowLayout());
 		
 		JLabel max = new JLabel(" Max value size: ");
 		JLabel min = new JLabel(" Min value size: ");
-			
+	
 		JLabel roadSize = new JLabel(" Road size: ");
 		
 		JLabel thetaMin = new JLabel(" Angle margin: ");
@@ -598,6 +712,27 @@ public class CoSpiGUI extends JFrame{
 		
 		JComboBox minAngles = new JComboBox(possibleAnglesDisplay);
 		JComboBox colors = new JComboBox(possibleColorsDisplay);
+		
+		
+		// relative adjustment of Max sizes
+		JButton maxPlus  = new JButton("+");
+		JButton maxMinus = new JButton("-");
+		maxPlus.addActionListener( e->{maxText.setText(String.valueOf(((int)(Integer.parseInt(maxText.getText())*1.2))));});
+		maxMinus.addActionListener(e->{maxText.setText(String.valueOf(((int)(Integer.parseInt(maxText.getText())*0.8))));});
+		
+		// relative adjustment of Min sizes
+		JButton minPlus  = new JButton("+");
+		JButton minMinus = new JButton("-");
+		minPlus.addActionListener( e->{minText.setText(String.valueOf(((int)(Integer.parseInt(minText.getText())*1.5))));});
+		minMinus.addActionListener(e->{minText.setText(String.valueOf(((int)(Integer.parseInt(minText.getText())*0.5))));});
+		
+		
+		// relative adjustment of Min sizes
+		JButton roadPlus  = new JButton("+");
+		JButton roadMinus = new JButton("-");
+		roadPlus.addActionListener( e->{road.setText(String.valueOf(((int)(Integer.parseInt(road.getText())*1.5))));});
+		roadMinus.addActionListener(e->{road.setText(String.valueOf(((int)(Integer.parseInt(road.getText())*0.5))));});
+		
 		
 		JButton apply = new JButton("Apply");
 		JButton reset = new JButton("Default");
@@ -634,14 +769,21 @@ public class CoSpiGUI extends JFrame{
             	parFrame.setVisible(true);
             }});
 		
-		JPanel panel = new JPanel(new GridLayout(6,2));
+		
+		JPanel panel = new JPanel(new GridLayout(0,4));
 		
 		panel.add(max);
 		panel.add(maxText);
+		panel.add(maxPlus); //ytz
+		panel.add(maxMinus); //ytz
 		panel.add(min);
 		panel.add(minText);
+		panel.add(minPlus); // new
+		panel.add(minMinus); // new
 		panel.add(roadSize);
 		panel.add(road);
+		panel.add(roadPlus); // new
+		panel.add(roadMinus); // new
 		panel.add(thetaMin);
 		panel.add(minAngles);
 		panel.add(colorText);
@@ -652,14 +794,10 @@ public class CoSpiGUI extends JFrame{
 		parFrame.add(panel);
 		parFrame.setVisible(true);
 		
-		// testing
-		
 		parFrame.addWindowListener(new WindowAdapter() {
 			  @Override
 			  public void windowClosing(WindowEvent we) {
-				  
-				  System.out.println("CLOSING PARAMS FRAME");
-				  parFrame = null;  // ytz
+				  parFrame = null;  // ytz: for opening again the frame from the menu
 			  }
 			});
 	}
