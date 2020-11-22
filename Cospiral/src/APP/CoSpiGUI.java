@@ -6,6 +6,7 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -24,6 +25,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
+
+//import com.sun.glass.events.WindowEvent;
+import java.awt.event.WindowEvent;
 
 import layoutAlgs.CoSpi;
 import layoutAlgs.VisConfig;
@@ -56,6 +60,7 @@ public class CoSpiGUI extends JFrame{
 	JMenu designMenu;
 	JMenu labelsAxesMenu;
 	JMenu exportMenu;
+	JFrame parFrame; // the frame with the parameters
 	
 	
 	
@@ -260,7 +265,7 @@ public class CoSpiGUI extends JFrame{
 		JMenuItem parameters = new JMenuItem("Other Parameters (Sizes, Colors, etc)");
 		parameters.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	setLayoutParameters();
+            	if (parFrame==null) setLayoutParameters();
             }});
 		
 		designMenu.add(mode);
@@ -556,6 +561,8 @@ public class CoSpiGUI extends JFrame{
 		for (JMenu menu: menus)
 			if (menu!=null)
 				menu.setEnabled(true);
+		if (parFrame==null) // i.e. if not already opened
+			setLayoutParameters();
 		//ytz end
 		SwingUtilities.updateComponentTreeUI(this);
 	}
@@ -571,7 +578,7 @@ public class CoSpiGUI extends JFrame{
 		Color [] possibleColors = {Color.orange,Color.blue,Color.green,Color.red,Color.gray,Color.cyan,Color.yellow,Color.black};
 		String [] possibleColorsDisplay = {"Orange", "Blue","Green","Red","Gray","Cyan","Yellow","Black"};
 		
-		JFrame parFrame = new JFrame("Parameters");
+		parFrame = new JFrame("Parameters");
 		parFrame.setResizable(false);
 		parFrame.setSize(250,180);
 		parFrame.setBounds(1000,0,250,180);
@@ -644,6 +651,17 @@ public class CoSpiGUI extends JFrame{
 		
 		parFrame.add(panel);
 		parFrame.setVisible(true);
+		
+		// testing
+		
+		parFrame.addWindowListener(new WindowAdapter() {
+			  @Override
+			  public void windowClosing(WindowEvent we) {
+				  
+				  System.out.println("CLOSING PARAMS FRAME");
+				  parFrame = null;  // ytz
+			  }
+			});
 	}
 
 	/**
