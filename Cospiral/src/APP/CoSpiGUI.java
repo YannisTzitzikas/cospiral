@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -557,21 +558,46 @@ public class CoSpiGUI extends JFrame{
 	
 	/**
 	 * Runs the CoSpi algorithm and adds the outcome to the frame.
+	 * It wraps it in threads for capturing cases where the algorithm cannot respond (i.e. if the canvas is too small)
 	 */
 	public void visualizeOnFrame() {
-		CoSpi.clearOldData();
-		if(!fileConf.toBePieChart) {CoSpi.loadDataAndRun(fileConf.filename, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,true,false);}
-		else {CoSpi.loadDataAndRunPieChart(fileConf.filename, fileConf.groupingColumn, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,true,false);}
-		setContentPane(CoSpi.pic.getJLabel());
-		//SwingUtilities.updateComponentTreeUI(this);
+			
+		//Motivation: to avoid blocking if sizes are too big
+		// The runnable that contains the code that prepares the drawing
+		Runnable runnable4Visualization = () -> {
+		    try {
+		    	CoSpi.clearOldData();
+		    	if(!fileConf.toBePieChart) {CoSpi.loadDataAndRun(fileConf.filename, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,true,false);}
+				else {CoSpi.loadDataAndRunPieChart(fileConf.filename, fileConf.groupingColumn, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,true,false);}
+				setContentPane(CoSpi.pic.getJLabel());
+				SwingUtilities.updateComponentTreeUI(this);
+		    }
+		    catch (Exception e) {e.printStackTrace();}
+		};
+
+		// The thread
+		Thread thread4Visualization = new Thread(runnable4Visualization);
 		
-		//ytz start
+		
+		// A new thread that will be used for measuring time without blocking the current GUI thread
+		Thread threadController = new Thread (() -> {
+			thread4Visualization.start(); 
+			try {Thread.sleep(1000);} catch (InterruptedException e)  {  e.printStackTrace(); } // 1 sec delay for the algorithm.
+	        if (thread4Visualization.isAlive()) {  
+	        	System.out.println("I WILL STOP THE THREAD");
+	        	JOptionPane.showMessageDialog(this,"The sizes that you have specified are too big to fit in the canvas. Reduce the sizes and try again.","Warning",JOptionPane.WARNING_MESSAGE);
+	        }
+			thread4Visualization.stop();  // stopping the visualization thread  
+		});
+		threadController.start();
+		
+	
+		// Menu-related adjustements
 		this.fileSelected = true; // a file has been loaded (ytz)
-		// enabling the other menus:
 		JMenu[] menus = { designMenu, labelsAxesMenu, exportMenu}; // the menus that should be enabled only if a file has been selected
 		for (JMenu menu: menus)
 			if (menu!=null)
-				menu.setEnabled(true);
+				menu.setEnabled(true);  // enabling the other menus:
 		if (parFrame==null) // i.e. if not already opened
 			setLayoutParameters(); // opens directly the LayoutParams frame
 		//ytz end
