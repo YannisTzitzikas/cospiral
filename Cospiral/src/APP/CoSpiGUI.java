@@ -315,8 +315,8 @@ public class CoSpiGUI extends JFrame{
 		JMenu show = new JMenu("Visibilty");
 		
 		JCheckBoxMenuItem disableLabel 	= new JCheckBoxMenuItem("Disabled",false);// ytz: true htan
-		JCheckBoxMenuItem name     		= new JCheckBoxMenuItem("Names",false);
-		JCheckBoxMenuItem value    		= new JCheckBoxMenuItem("Values",false); 
+		JCheckBoxMenuItem name     		= new JCheckBoxMenuItem("Names",true);
+		JCheckBoxMenuItem value    		= new JCheckBoxMenuItem("Values",true); 
 		JCheckBoxMenuItem rank  		= new JCheckBoxMenuItem("Rank",false); 
 		
 		JMenuItem labelParameters = new JMenuItem("More..");
@@ -473,7 +473,7 @@ public class CoSpiGUI extends JFrame{
 	 */
 	public void createInfoMenu(JMenu cMenu) {
 		JMenu info = new JMenu("Information");
-		JCheckBoxMenuItem enabled = new JCheckBoxMenuItem("Enabled",false); 
+		JCheckBoxMenuItem enabled = new JCheckBoxMenuItem("Enabled",true); 
 		
 		enabled.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
