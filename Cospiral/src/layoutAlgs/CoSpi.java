@@ -731,6 +731,7 @@ public class CoSpi {
 			  fromAngle = fromAngle+anglePerDomain + angleGapAfterADomain;
 		  }
 		  pic.updatePixels(pixels,N);
+		  LabelAlgorithms.writeInfoToImageSynthetic(pic.image, N, 16, Color.GRAY, rects.get(0).getLen(), rects.get(rects.size()-1).getLen());
 		  pic.show();
 		  
 	}
@@ -785,6 +786,7 @@ public class CoSpi {
 			  K = Math.min(K, Kbefore); // to avoid out of index
 		  }
 		  pic.updatePixels(pixels,N);
+		  LabelAlgorithms.writeInfoToImageSynthetic(pic.image, N, 16, Color.GRAY, rects.get(0).getLen(), rects.get(rects.size()-1).getLen());
 		  pic.show();
 	}
 

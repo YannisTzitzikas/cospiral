@@ -169,5 +169,36 @@ public class LabelAlgorithms {
 		g.drawString(nRmax,x,y4);
 		
 	}
-	
+
+	public static void writeInfoToImageSynthetic(Image pic,int N,int size,Color color,int realMax, int realMin) {
+		//Getting the text to be drawn
+		String nRmax = "Max: "+  String.valueOf(realMax);
+		String nRmin = "Min: "+  String.valueOf(realMin);
+
+		//Get the graphics of the image
+		Graphics g = pic.getGraphics();
+			
+		//Set the text font
+		Font font = new Font("Sansserif", Font.PLAIN, size);
+		g.setColor(color);
+		g.setFont(font);
+				
+		//Get the metrics to calculate the size of the text
+		FontMetrics metrics = g.getFontMetrics(font);
+				
+		//Get the height and calculate the max width of the text
+		int height   = metrics.getHeight();
+		int maxWidth = g.getFontMetrics().stringWidth(nRmax);
+				
+		//Center text under the spiral at the right bottom corner
+		int x = N-maxWidth-4;
+		int y1 = N-height;
+		int y2 = N-2*height;
+		int y3 = N-3*height;
+		int y4 = N-4*height;
+				
+		//Draw the information to the layout
+		g.drawString(nRmin,x,y1);
+		g.drawString(nRmax,x,y2);		
+	}
 }

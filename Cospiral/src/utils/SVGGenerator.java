@@ -149,7 +149,9 @@ public class SVGGenerator {
 		  			}
 		  		}
 		  		else {
+		  			diffRate = height/2;
 	  				label_name = "<text x=\""+(xlab)+"\" y=\""+(ylab - diffRate)+"\"  font-family=\"Sansserif\" font-size=\""+(side/decRate)+"\" fill=\""+ color +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+name +"</text>\n";	
+	  				label_val =  "<text x=\""+(xlab)+"\" y=\""+(ylab + diffRate)+"\"  font-family=\"Sansserif\" font-size=\""+(side/decRate)+"\" fill=\""+ color +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+value+"</text>\n";	
 		  		}
 		  		break;
 		  	case threeLabels:
@@ -169,6 +171,42 @@ public class SVGGenerator {
 		}
 		
 		//Rectangles drawn
+		if(conf.isEnableInfo()) {
+			//Getting the text to be drawn
+			String nMax  = "Normalized Max: " + rects.get(0).getLen();
+			String nMin  = "Normilized Min: " + rects.get(rects.size()-1).getLen();
+			String nRmax = "Real Max: " +  rects.get(0).getOriginalValue();
+			String nRmin = "Real Min: " +  rects.get(rects.size()-1).getOriginalValue();
+			
+			//Get the graphics of the image
+			Graphics g1 = pic.getGraphics();
+		
+			//Set the text font
+			Font font = new Font("Sansserif", Font.PLAIN, 16);
+			g1.setColor(Color.LIGHT_GRAY);
+			g1.setFont(font);
+			
+			//Get the metrics to calculate the size of the text
+			FontMetrics metrics = g1.getFontMetrics(font);
+			
+			//Get the height and calculate the max width of the text
+			int height   = metrics.getHeight();
+			int maxWidth = Math.max(g1.getFontMetrics().stringWidth(nMax), g1.getFontMetrics().stringWidth(nRmax));
+			
+			//Center text under the spiral at the right bottom corner
+			int x = N-maxWidth-4;
+			int y1 = N-height;
+			int y2 = N-2*height;
+			int y3 = N-3*height;
+			int y4 = N-4*height;
+			
+			
+			body += "<text x=\""+(x)+"\" y=\""+(y1)+"\"  font-family=\"Sansserif\" font-size=\""+(16)+"\" fill=\""+ Color.LIGHT_GRAY +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+nMin +"</text>\n";
+			body += "<text x=\""+(x)+"\" y=\""+(y3)+"\"  font-family=\"Sansserif\" font-size=\""+(16)+"\" fill=\""+ Color.LIGHT_GRAY +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+nMax +"</text>\n";
+			body += "<text x=\""+(x)+"\" y=\""+(y2)+"\"  font-family=\"Sansserif\" font-size=\""+(16)+"\" fill=\""+ Color.LIGHT_GRAY +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+nRmin +"</text>\n";
+			body += "<text x=\""+(x)+"\" y=\""+(y4)+"\"  font-family=\"Sansserif\" font-size=\""+(16)+"\" fill=\""+ Color.LIGHT_GRAY +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+nRmax +"</text>\n";
+		}
+		
 		
 		//Write the html script to the file
 		editor.write(htmlHead);
