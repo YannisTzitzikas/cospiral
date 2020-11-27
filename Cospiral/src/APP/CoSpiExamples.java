@@ -49,13 +49,13 @@ public class CoSpiExamples {
 		/*
 		 * SYNTHETIC DATA VISUALIZATIONS EXAMPLES
 		 */
-		CoSpi.visualize(SyntheticDataGenerator.DecreasingByPercentage(1500, 80, 1, 20),conf, false, true, false, false, false);
+		/*CoSpi.visualize(SyntheticDataGenerator.DecreasingByPercentage(1500, 80, 1, 20),conf, false, true, false, false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData(); 
 		
 		CoSpi.visualize(SyntheticDataGenerator.PowerLaw(1000, 150, 1.2, 1),conf, false,true,false,false,false);
 		TimeUnit.SECONDS.sleep(1);
-		CoSpi.clearOldData();
+		CoSpi.clearOldData();*/
 		
 		/*
 		 * DATASET VISUALIZATION EXAMPLES
@@ -65,7 +65,7 @@ public class CoSpiExamples {
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 		
-		CoSpi.loadDataAndRun("Resources/word_frequency_shakespeare.csv", 1, 0, 1, 50, conf,false,false);
+		/*CoSpi.loadDataAndRun("Resources/word_frequency_shakespeare.csv", 1, 0, 1, 50, conf,false,false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 		
@@ -76,7 +76,7 @@ public class CoSpiExamples {
 		
 		CoSpi.loadDataAndRunPieChart("Resources/companies.csv", 1, 2, 0, 10, 40, conf,false,false);
 		TimeUnit.SECONDS.sleep(1);
-		CoSpi.clearOldData();
+		CoSpi.clearOldData();*/
 	}
 
 	/**
@@ -253,7 +253,7 @@ public class CoSpiExamples {
 	public static void main(String [] args) {
 		try{
 			indicativeExamples();
-		    demoExamples();
+		    //demoExamples();
 			//veryBigExamples(); //Canvas size should be changed here.
 		    //comparisonExamples();
 			//runAndOpenSVGExamples(); //filepath in generator should be changed.

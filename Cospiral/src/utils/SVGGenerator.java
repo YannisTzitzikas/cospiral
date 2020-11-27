@@ -130,7 +130,7 @@ public class SVGGenerator {
 		  	if(conf.isShowRank()) selectedLabel = LabelStyle.values()[selectedLabel.ordinal() + 1];
 		  	if( conf.isShowVal()) selectedLabel = LabelStyle.values()[selectedLabel.ordinal() + 1];
 		  	if(conf.isShowName()) selectedLabel = LabelStyle.values()[selectedLabel.ordinal() + 1];
-		  	  	
+		  			  	
 		  	switch(selectedLabel) {
 		  	case oneLabel:
 		  		if(conf.isShowRank()) label_rank = "<text x=\""+(xlab)+"\" y=\""+(ylab)+"\"  font-family=\"Sansserif\" font-size=\""+(side/decRate)+"\" fill=\""+ color +"\" dominant-baseline=\"middle\" text-anchor=\"middle\">"+rank+"</text>\n";	

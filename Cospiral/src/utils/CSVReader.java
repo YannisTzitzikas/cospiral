@@ -6,8 +6,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -289,18 +293,19 @@ public class CSVReader {
 	 * @return The map of entities-value name created
 	 * @author Manos Chatzakis
 	 */
-	public static Map<Integer,String> readValuesAndCreateMap(int valKeyIndex,int nameIndex,ArrayList a) {
-		Map<Integer,String>nameValMap = new TreeMap<Integer,String>(Collections.reverseOrder());
-		
+	public static Map<String,Integer> readValuesAndCreateMap(int valKeyIndex,int nameIndex,ArrayList a) {
+		Map<String,Integer>nameValMap = new TreeMap<String,Integer>(Collections.reverseOrder());
 		for (Object o: a) {
 			String[] sa = ((String[]) o);
 			float floatInput = Float.parseFloat(sa[valKeyIndex]);
-			int curValKey = Math.round(floatInput);
+			int curVal = Math.round(floatInput);
 			String curName = sa[nameIndex];
-			nameValMap.put(curValKey, curName);
+			nameValMap.put(curName,curVal);
 		}
-		
-		return nameValMap;
+		Map<String, Integer> sortedMap = nameValMap.entrySet().stream()
+                .sorted(Entry.comparingByValue())
+                .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		return sortedMap;
 	}
 	
 	/**
@@ -310,42 +315,43 @@ public class CSVReader {
 	 * @param mapGV The map holding the value-name entities
 	 * @author Manos Chatzakis
 	 */
-	public static void separateMapToLists(ArrayList<Integer>originalValues,ArrayList<String>originalNames,Map<Integer,String>mapGV) {
+	public static void separateMapToLists(ArrayList<Integer>originalValues,ArrayList<String>originalNames,Map<String,Integer>mapGV) {
 		mapGV.forEach((k, v) -> {
-			originalValues.add(k);	
-			originalNames.add(v);
+			originalValues.add(v);	
+			originalNames.add(k);
 		});
-		
+		Collections.reverse(originalValues);
+		Collections.reverse(originalNames);
 	}
 	
     public static void main(String[] args) {
     	// just some tests
     	
-    	String csvFile = "Resources/companies.csv";
+    	String csvFile = "Resources/english.csv";//"Resources/cities.csv";
     	
     	ArrayList tmp = readFile(csvFile);
-    	/*printReadValues(tmp);
-    	    	
-    	ArrayList tmp2 = getValueColumn(readFile(csvFile),1);
-    	printReadValues(tmp2);
+    	//printReadValues(tmp);
+    	System.out.println(tmp.size());  	
+    	/*ArrayList tmp2 = getValueColumn(readFile(csvFile),1);
+    	printReadValues(tmp2);*/
     	
  
-    	System.out.println("===");
+    	/*System.out.println("===");
     	ArrayList tmp3 = toIntDescending(getValueColumn(readFile(csvFile),1));
     	printReadValues(tmp3);
-    	
     	Normalize(tmp3, 10, 100);*/
     	
     	//Some tests just to create the maps 
-    	//readValuesAndCreateMap(1,0,tmp);
-    	/*ArrayList<Integer>vals = new ArrayList<>();
+    	ArrayList<Integer>vals = new ArrayList<>();
     	ArrayList<String>names = new ArrayList<>();
     	separateMapToLists(vals,names,readValuesAndCreateMap(1,0,tmp));
     	for(int i = 0; i<vals.size(); i++) {
     		System.out.println(names.get(i)+"=>"+vals.get(i));
-    	}*/
+    	}
+    	System.out.println(vals.size());
+    	System.out.println(names.size());
     	
-    	readGroupedByValues(csvFile, 1, 2);
+    	//readGroupedByValues(csvFile, 1, 2);
     	//System.out.println(readValuesAndCreateMap(csvFile, 1, 2,0));
     	//readDataForPieChart(csvFile,1,2,0);
     }

@@ -217,7 +217,7 @@ public class CoSpi {
 		  int allValuesMax = Integer.MIN_VALUE;
 		  int allValuesMin = Integer.MAX_VALUE;
 		  
-		  Map<String,ArrayList<Integer>> mapGVint = new TreeMap<>();
+		  Map<String,ArrayList<Integer>> mapGVint  = new TreeMap<>();
 		  Map<String,ArrayList<String>> mapGVNames = new TreeMap<>();
 		  
 		  
