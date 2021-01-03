@@ -132,13 +132,14 @@ public class LabelAlgorithms {
 	 * @param MAX_SIZE
 	 * @param MIN_SIZE
 	 */
-	public static void writeInfoToImage(Image pic,int N,int size,Color color,int MAX_SIZE,int MIN_SIZE,int realMax, int realMin) {
+	public static void writeInfoToImage(Image pic,int N,int size,Color color,int MAX_SIZE,int MIN_SIZE,int realMax, int realMin,int K) {
 		
 		//Getting the text to be drawn
-		String nMax  = "Normalized Max: "+String.valueOf(MAX_SIZE);
-		String nMin  = "Normilized Min: "+String.valueOf(MIN_SIZE);
-		String nRmax = "Real Max: "+  String.valueOf(realMax);
-		String nRmin = "Real Min: "+  String.valueOf(realMin);
+		String values = "Entities: " + K;
+		String nMax   = "Normilized Max: "+String.valueOf(MAX_SIZE);
+		String nMin   = "Normilized Min: "+String.valueOf(MIN_SIZE);
+		String nRmax  = "Actual Max: "+  String.valueOf(realMax);
+		String nRmin  = "Actual Min: "+  String.valueOf(realMin);
 
 		//Get the graphics of the image
 		Graphics g = pic.getGraphics();
@@ -148,12 +149,12 @@ public class LabelAlgorithms {
 		g.setColor(color);
 		g.setFont(font);
 		
-		//Get the metrics to calulate the size of the text
+		//Get the metrics to calculate the size of the text
 		FontMetrics metrics = g.getFontMetrics(font);
 		
 		//Get the height and calculate the max width of the text
 		int height   = metrics.getHeight();
-		int maxWidth = Math.max(g.getFontMetrics().stringWidth(nMax), g.getFontMetrics().stringWidth(nRmax));
+		int maxWidth = Math.max(g.getFontMetrics().stringWidth(values),(Math.max(g.getFontMetrics().stringWidth(nMax),g.getFontMetrics().stringWidth(nRmax))));
 		
 		//Center text under the spiral at the right bottom corner
 		int x = N-maxWidth-4;
@@ -161,12 +162,14 @@ public class LabelAlgorithms {
 		int y2 = N-2*height;
 		int y3 = N-3*height;
 		int y4 = N-4*height;
+		int y5 = N-5*height;
 		
 		//Draw the information to the layout
 		g.drawString(nMax, x,y3);
 		g.drawString(nMin, x,y1);
 		g.drawString(nRmin,x,y2);
 		g.drawString(nRmax,x,y4);
+		g.drawString(values,x,y5);
 		
 	}
 

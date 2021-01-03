@@ -32,6 +32,9 @@ public class VisConfig implements Cloneable {
 	private int roadSize = 2;
 	private int labelDecreasingRate = 4;
 	
+	private int max;
+	private int min;
+	
 	private boolean enableInfo   = false;
 	private boolean showRank     = false;
 	private boolean showName     = false;
@@ -213,6 +216,22 @@ public class VisConfig implements Cloneable {
 
 	public void setAllowOverlap(boolean allowOverlap) {
 		this.allowOverlap = allowOverlap;
+	}
+
+	public int getMax() {
+		return max;
+	}
+
+	public void setMax(int max) {
+		this.max = max;
+	}
+
+	public int getMin() {
+		return min;
+	}
+
+	public void setMin(int min) {
+		this.min = min;
 	}
 
 }

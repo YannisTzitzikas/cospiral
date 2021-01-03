@@ -277,7 +277,7 @@ public class CSVReader {
 		for (Object o: a) {
 			if (o instanceof String[])  {
 				String[] sa = ((String[]) o);
-				for (String s: sa )
+				for (String s: sa)
 				 	System.out.print(s + " ");
 			} else
 				System.out.print(o);
@@ -295,6 +295,7 @@ public class CSVReader {
 	 */
 	public static Map<String,Integer> readValuesAndCreateMap(int valKeyIndex,int nameIndex,ArrayList a) {
 		Map<String,Integer>nameValMap = new TreeMap<String,Integer>(Collections.reverseOrder());
+		
 		for (Object o: a) {
 			String[] sa = ((String[]) o);
 			float floatInput = Float.parseFloat(sa[valKeyIndex]);
@@ -302,9 +303,9 @@ public class CSVReader {
 			String curName = sa[nameIndex];
 			nameValMap.put(curName,curVal);
 		}
-		Map<String, Integer> sortedMap = nameValMap.entrySet().stream()
-                .sorted(Entry.comparingByValue())
-                .collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		
+		Map<String, Integer> sortedMap = nameValMap.entrySet().stream().sorted(Entry.comparingByValue()).collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		
 		return sortedMap;
 	}
 	

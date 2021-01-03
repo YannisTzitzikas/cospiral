@@ -296,8 +296,8 @@ public class CoSpi {
 			boolean pieChart,boolean createSVG) {
 		
 		K = values.size();
-		MAX_SIZE = values.get(0);
-		MIN_SIZE = values.get(K-1);
+		MAX_SIZE = values.get(0); conf.setMax(MAX_SIZE);
+		MIN_SIZE = values.get(K-1); conf.setMin(MIN_SIZE);
 		
 		System.out.println("Values: "+K);
 		System.out.println("Max size: "+MAX_SIZE);
@@ -327,13 +327,12 @@ public class CoSpi {
 		pic.updatePixels(pixels,N); 
 				
 		if(conf.includeLabels() && lastCall) {
-			//System.out.println("Including Labels");
 			LabelAlgorithms.addLabels(conf, rectangles, pic, N);
 		}
 		
 		if(!GUIMode && lastCall) {pic.show();}
 		
-		if(conf.isEnableInfo() && lastCall) {LabelAlgorithms.writeInfoToImage(pic.image, N, 16, Color.GRAY, MAX_SIZE, MIN_SIZE,Collections.max(originalValues),Collections.min(originalValues));}
+		if(conf.isEnableInfo() && lastCall) {LabelAlgorithms.writeInfoToImage(pic.image, N, 16, Color.GRAY, MAX_SIZE, MIN_SIZE,Collections.max(originalValues),Collections.min(originalValues),K);}
 		
 		if(createSVG && lastCall) {
 			try {SVGGenerator.createSVG(conf, rectangles, N, pic.image, "C:\\Users\\manos\\Desktop","SVGNew.html");}
@@ -742,9 +741,7 @@ public class CoSpi {
 	public static void  clusteredLOD() {
 		  pic.preparePixels(pixels,N,Color.white);
 		  
-		  ArrayList vals = 
-				  SyntheticDataGenerator
-				  	.DecreasingByPercentage(100, 40, 2, 20); // size, maxsize, minsize, decreasePercentage
+		  ArrayList vals = SyntheticDataGenerator.DecreasingByPercentage(100, 40, 2, 20); // size, maxsize, minsize, decreasePercentage
 		  copyInfoToRects(vals);
 		  K = rects.size();
 		  System.out.println("SIZE RECTS:"+ K);

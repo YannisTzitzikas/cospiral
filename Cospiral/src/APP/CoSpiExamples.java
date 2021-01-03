@@ -252,7 +252,7 @@ public class CoSpiExamples {
 	 */
 	public static void main(String [] args) {
 		try{
-			//indicativeExamples();
+			indicativeExamples();
 		    demoExamples();
 			//veryBigExamples(); //Canvas size should be changed here.
 		    //comparisonExamples();

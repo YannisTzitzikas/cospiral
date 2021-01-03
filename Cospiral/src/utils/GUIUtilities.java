@@ -1,14 +1,22 @@
 package utils;
 
+import java.awt.Color;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+
+import layoutAlgs.VisConfig;
+import layoutAlgs.params.ShapeGaps;
 
 /**
  * @author Manos Chatzakis (chatzakis@ics.forth.gr)
@@ -75,7 +83,7 @@ public class GUIUtilities {
 		}
 		
 		}catch(Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		return filepath; //It returns a string in order to use it easily while creating a file
 	}
@@ -104,4 +112,96 @@ public class GUIUtilities {
 		}
 		return filepath; //It returns a string in order to use it easily while creating a file
  	}
+	
+	public static String saveCurrentProgress(VisConfig conf,String path) throws IOException {
+		
+		File cospi = new File(path+".cospi");
+        
+		FileOutputStream fr = new FileOutputStream(cospi);
+        OutputStreamWriter writer = new OutputStreamWriter(fr, "UTF-8");
+		
+        String information = conf.getMin() + "\n" + conf.getMax() + "\n" + conf.getAngleMax() + "\n" + conf.getAngleMin() + "\n" + conf.getRoadSize() + "\n" + conf.getLabelColor().getRGB() + "\n" + conf.getLabelDecreasingRate() + "\n" + conf.getColor().getRGB() + "\n";
+				
+		if(conf.isEnableInfo()) information += 1 + "\n";
+		else information += 0 + "\n";
+		
+		if(conf.isShowName()) information += 1 + "\n";
+		else information += 0 + "\n";
+		
+		if(conf.isShowRank()) information += 1 + "\n";
+		else information += 0 + "\n";
+			
+		if(conf.isShowVal()) information += 1 + "\n";
+		else information += 0 + "\n";
+		
+		if(conf.isAllowOverlap()) information += 1 + "\n";
+		else information += 0 + "\n";
+		
+		if(conf.getShapeGaps() == ShapeGaps.Normal) information += 1 + "\n";
+		else information += 0 + "\n";
+		
+		switch(conf.getDrawStyle()) {
+		case Outline:
+			information += 1 + "\n";
+			break;
+		case Filled:
+			information += 0 + "\n";
+		default:
+			information += 1 + "\n";
+			break;
+		}
+		
+		switch(conf.getExpandStyle()) {
+		case Spiral:
+			information += 1 + "\n";
+			break;
+		case Ring:
+			information += 0 + "\n";
+		default:
+			information += 1 + "\n";
+			break;
+		}
+		
+		switch(conf.getDirection()) {
+		case Expand:
+			information += 1 + "\n";
+			break;
+		case Shrink:
+			information += 0 + "\n";
+		default:
+			information += 1 + "\n";
+			break;
+		}
+		
+		switch(conf.getAxes()) {
+		case AxisX:
+			information += 1 + "\n";
+			break;
+		case AxisY:
+			information += 2 + "\n";
+		case AxesXY:
+			information += 3 + "\n";
+		case NoAxes:
+			information += 0 + "\n";
+		default:
+			information += 0 + "\n";
+			break;
+		}
+		
+		writer.write(information);
+        writer.flush();
+		writer.close();
+        
+		return cospi.getAbsolutePath();	
+	}
+	
+	public static VisConfig loadSavedProgress(String path) {
+		VisConfig conf = null;
+		
+		return conf;
+	}
+	
+	public static void main(String [] args) {
+		//System.out.println(Color.red.);
+	}
 }

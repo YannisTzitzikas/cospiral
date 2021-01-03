@@ -1031,7 +1031,8 @@ class FileConf{
                 firstLinesText +=  "\n";
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
+        	System.out.println("Canceled File Selection");
         }
 	}
 	

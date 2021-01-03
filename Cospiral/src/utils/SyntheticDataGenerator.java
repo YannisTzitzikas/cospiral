@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * 
  * @author Yannis Tzitzikas (yannistzitzik@gmail.com)
  * It creates a synthetically derived set of values.
- *  Various methods for producing decreasing sets of values are supported.
+ * Various methods for producing decreasing sets of values are supported.
  */
 public class SyntheticDataGenerator {
 	
