@@ -32,8 +32,8 @@ public class VisConfig implements Cloneable {
 	private int roadSize = 2;
 	private int labelDecreasingRate = 4;
 	
-	private int max;
-	private int min;
+	private int max = 20;
+	private int min = 1;
 	
 	private boolean enableInfo   = false;
 	private boolean showRank     = false;
@@ -123,9 +123,10 @@ public class VisConfig implements Cloneable {
 	}
 
 	public void setLabelColor(Color labelColor) {
+		
 		this.labelColor = labelColor;
 	}
-
+	
 	public int getLabelDecreasingRate() {
 		return labelDecreasingRate;
 	}
