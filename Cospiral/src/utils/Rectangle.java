@@ -3,44 +3,45 @@ package utils;
 import java.awt.Color;
 
 /**
- * @author Manos Chatzakis (chatzakis@ics.forth.gr)
  * This class simulates a rectangle in the terms of the CoSpi algorithm.
+ * 
+ * @author Manos Chatzakis (chatzakis@ics.forth.gr)
  */
 public class Rectangle {
-	
+
 	public int x;
 	public int y;
 	public int len;
 	public int originalValue;
 	public int rank;
 	public int normalizedValue;
-	
+
 	public Color color;
 	public String originalName;
-	
+
 	/**
 	 * 
 	 */
 	public Rectangle() {
-		
+
 	}
-	
+
 	public Rectangle(int len) {
 		this.len = len;
 	}
-	
+
 	/**
 	 * 
 	 * @param x
 	 * @param y
 	 * @param len
 	 */
-	public Rectangle(int x,int y,int len) {
+	public Rectangle(int x, int y, int len) {
 		this.x = x;
 		this.y = y;
 		this.len = len;
 	}
-	
+
 	/**
 	 * 
 	 * @param x
@@ -49,14 +50,14 @@ public class Rectangle {
 	 * @param originalValue
 	 * @param originalName
 	 */
-	public Rectangle(int x,int y,int len, int originalValue, String originalName) {
+	public Rectangle(int x, int y, int len, int originalValue, String originalName) {
 		this.x = x;
 		this.y = y;
 		this.len = len;
 		this.originalName = originalName;
 		this.originalValue = originalValue;
 	}
-	
+
 	/**
 	 * 
 	 * @param x
@@ -66,7 +67,7 @@ public class Rectangle {
 	 * @param originalName
 	 * @param color
 	 */
-	public Rectangle(int x,int y,int len, int originalValue, String originalName, Color color) {
+	public Rectangle(int x, int y, int len, int originalValue, String originalName, Color color) {
 		this.x = x;
 		this.y = y;
 		this.len = len;
@@ -74,7 +75,7 @@ public class Rectangle {
 		this.originalValue = originalValue;
 		this.color = color;
 	}
-	
+
 	/**
 	 * 
 	 * @param x
@@ -85,7 +86,7 @@ public class Rectangle {
 	 * @param originalName
 	 * @param color
 	 */
-	public Rectangle(int x,int y,int len, int originalValue,int rank, String originalName, Color color) {
+	public Rectangle(int x, int y, int len, int originalValue, int rank, String originalName, Color color) {
 		this.x = x;
 		this.y = y;
 		this.len = len;
@@ -94,7 +95,7 @@ public class Rectangle {
 		this.color = color;
 		this.rank = rank;
 	}
-	
+
 	/**
 	 * 
 	 * @param x
@@ -105,7 +106,8 @@ public class Rectangle {
 	 * @param originalName
 	 * @param color
 	 */
-	public Rectangle(int x,int y,int len, int originalValue,int normalizedValue,int rank, String originalName, Color color) {
+	public Rectangle(int x, int y, int len, int originalValue, int normalizedValue, int rank, String originalName,
+			Color color) {
 		this.x = x;
 		this.y = y;
 		this.len = len;
@@ -113,9 +115,9 @@ public class Rectangle {
 		this.originalValue = originalValue;
 		this.color = color;
 		this.rank = rank;
-		this.normalizedValue = normalizedValue; 
+		this.normalizedValue = normalizedValue;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -211,7 +213,7 @@ public class Rectangle {
 	public void setOriginalName(String originalName) {
 		this.originalName = originalName;
 	}
-	
+
 	/**
 	 * 
 	 * @param rank
@@ -219,7 +221,7 @@ public class Rectangle {
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
-	
+
 	/**
 	 * 
 	 * @return

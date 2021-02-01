@@ -1,6 +1,7 @@
 package APP;
 
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -9,12 +10,18 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -23,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -33,8 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-//import com.sun.glass.events.WindowEvent;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 
 import layoutAlgs.CoSpi;
 import layoutAlgs.VisConfig;
@@ -43,11 +51,10 @@ import layoutAlgs.params.Direction;
 import layoutAlgs.params.DrawStyle;
 import layoutAlgs.params.ExpandStyle;
 import layoutAlgs.params.ShapeGaps;
-import utils.GUIUtilities;
 import utils.SVGGenerator;
 
 /**
- * Version 3.0: Files merged, name changed and code cleaned, August 2020. This
+ * Version 1.0: Files merged, name changed and code cleaned, August 2020. This
  * class creates a UI environment for the CoSpi algorithm, to easily visualize
  * datasets. BUG: When new visualization begins, checkboxes don't refresh, as
  * they are local objects. Make global to fix?..
@@ -100,6 +107,7 @@ public class CoSpiGUI extends JFrame {
 		int HEIGHT = RESOLUTION + 50;
 
 		JMenuBar menu = new JMenuBar();
+
 		setResizable(false);
 		setSize(WIDTH, HEIGHT);
 		setTitle("CoSpi APP");
@@ -124,9 +132,9 @@ public class CoSpiGUI extends JFrame {
 		conf.setAngleMax(2 * Math.PI);
 		conf.setRoadSize(4);
 		conf.setAxes(Axes.NoAxes);
-		conf.setRectColor(Color.orange); // blue
+		conf.setRectColor(Color.orange);
 		conf.setEnableInfo(true);
-		conf.setLabelParams(false, true, true, Color.black, 4); // rank, name, val ,Color , decRate) {
+		conf.setLabelParams(false, true, true, Color.black, 4);
 		conf.setAllowOverlap(false);
 	}
 
@@ -149,8 +157,10 @@ public class CoSpiGUI extends JFrame {
 	 * @param menu
 	 */
 	public void createProjectMenu(JMenuBar menu) {
+
 		JMenu projectMenu = new JMenu("File");
 		projectMenu.setMnemonic('F');
+
 		JMenu newFile = new JMenu("Open");
 		JMenuItem classic = new JMenuItem("Classic (visualize two name-value columns from a file)");
 		classic.setToolTipText("Allows you to visualize two name-value columns from a file");
@@ -163,10 +173,10 @@ public class CoSpiGUI extends JFrame {
 
 		JMenuItem loadVis = new JMenuItem("Load Visualization..");
 		loadVis.setToolTipText("Load a CoSpi visualization from file system");
-		
+
 		classic.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fileConf = new FileConf(0, 1, false, GUIUtilities.fileSelectionGUI());
+				fileConf = new FileConf(0, 1, false, fileSelectionGUI());
 				columnParametersClassic();
 
 			}
@@ -174,7 +184,7 @@ public class CoSpiGUI extends JFrame {
 
 		pieChart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				fileConf = new FileConf(0, 2, 1, true, GUIUtilities.fileSelectionGUI());
+				fileConf = new FileConf(0, 2, 1, true, fileSelectionGUI());
 				columnParametersPieChart();
 
 			}
@@ -182,14 +192,14 @@ public class CoSpiGUI extends JFrame {
 
 		saveVis.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GUIUtilities.saveProgressGUI(conf);
+				// GUIUtilities.saveProgressGUI(conf,fileConf.filename,fileConf.toBePieChart);
 			}
 		});
-		
+
 		loadVis.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String filePath = GUIUtilities.fileSelectionGUI();
-				conf = GUIUtilities.loadSavedProgress(filePath);
+				String filePath = fileSelectionGUI();
+				// conf = GUIUtilities.loadSavedProgress(filePath);
 				MAX = conf.getMax();
 				MIN = conf.getMin();
 				visualizeOnFrame();
@@ -555,7 +565,7 @@ public class CoSpiGUI extends JFrame {
 
 		saveImage.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GUIUtilities.saveImageGUI(CoSpi.pic.image);
+				saveImageGUI(CoSpi.pic.image);
 			}
 		});
 
@@ -565,7 +575,7 @@ public class CoSpiGUI extends JFrame {
 					String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 					String filename = timeStamp + "_COSPI.html";
 					SVGGenerator.createSVG(conf, CoSpi.rectangles, CoSpi.N, CoSpi.pic.image,
-							GUIUtilities.folderSelectionGUI(), filename);
+							folderSelectionGUI(), filename);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -595,13 +605,13 @@ public class CoSpiGUI extends JFrame {
 
 		demoExample.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GUIUtilities.openSiteInBrowser("http://users.ics.forth.gr/~tzitzik/demos/cospi/index.html");
+				openSiteInBrowser("http://users.ics.forth.gr/~tzitzik/demos/cospi/index.html");
 			}
 		});
 
 		aboutCS.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				GUIUtilities.openSiteInBrowser("http://users.ics.forth.gr/~tzitzik/");
+				openSiteInBrowser("http://users.ics.forth.gr/~tzitzik/");
 			}
 		});
 
@@ -623,12 +633,12 @@ public class CoSpiGUI extends JFrame {
 		Runnable runnable4Visualization = () -> {
 			try {
 				CoSpi.clearOldData();
-				if (!fileConf.toBePieChart) {
-					CoSpi.loadDataAndRun(fileConf.filename, fileConf.valueColumn, fileConf.nameColumn, MIN, MAX, conf,
-							true, false);
+				if (!fileConf.getToBePieChart()) {
+					CoSpi.loadDataAndRun(fileConf.getFilename(), fileConf.getValueColumn(), fileConf.getNameColumn(),
+							MIN, MAX, conf, true, false);
 				} else {
-					CoSpi.loadDataAndRunPieChart(fileConf.filename, fileConf.groupingColumn, fileConf.valueColumn,
-							fileConf.nameColumn, MIN, MAX, conf, true, false);
+					CoSpi.loadDataAndRunPieChart(fileConf.getFilename(), fileConf.getGroupingColumn(),
+							fileConf.getValueColumn(), fileConf.getNameColumn(), MIN, MAX, conf, true, false);
 				}
 				setContentPane(CoSpi.pic.getJLabel());
 				SwingUtilities.updateComponentTreeUI(this);
@@ -1077,6 +1087,362 @@ public class CoSpiGUI extends JFrame {
 	}
 
 	/**
+	 * 
+	 * @param conf
+	 * @param fconf
+	 */
+	public static void saveProgressGUI(VisConfig conf, FileConf fconf) {
+		JFrame modelFrame = new JFrame();
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Select save location.");
+		int userSelection = fileChooser.showSaveDialog(modelFrame);
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+			try {
+				saveCurrentProgress(conf, fconf, filePath);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param conf
+	 * @param fconf
+	 * @param path
+	 * @return
+	 * @throws IOException
+	 */
+	public static String saveCurrentProgress(VisConfig conf, FileConf fconf, String path) throws IOException {
+
+		File cospi = new File(path + ".cospi");
+
+		FileOutputStream fr = new FileOutputStream(cospi);
+		OutputStreamWriter writer = new OutputStreamWriter(fr, "UTF-8");
+
+		String information = conf.getMin() + "\n" + conf.getMax() + "\n" + conf.getAngleMax() + "\n"
+				+ conf.getAngleMin() + "\n" + conf.getRoadSize() + "\n" + conf.getLabelColor().getRGB() + "\n"
+				+ conf.getLabelDecreasingRate() + "\n" + conf.getColor().getRGB() + "\n";
+
+		if (conf.isEnableInfo())
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		if (conf.isShowName())
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		if (conf.isShowRank())
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		if (conf.isShowVal())
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		if (conf.isAllowOverlap())
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		if (conf.getShapeGaps() == ShapeGaps.Normal)
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		switch (conf.getDrawStyle()) {
+		case Outline:
+			information += 1 + "\n";
+			break;
+		case Filled:
+			information += 0 + "\n";
+			break;
+		default:
+			information += 1 + "\n";
+			break;
+		}
+
+		switch (conf.getExpandStyle()) {
+		case Spiral:
+			information += 1 + "\n";
+			break;
+		case Ring:
+			information += 0 + "\n";
+			break;
+		default:
+			information += 1 + "\n";
+			break;
+		}
+
+		switch (conf.getDirection()) {
+		case Expand:
+			information += 1 + "\n";
+			break;
+		case Shrink:
+			information += 0 + "\n";
+			break;
+		default:
+			information += 1 + "\n";
+			break;
+		}
+
+		switch (conf.getAxes()) {
+		case AxisX:
+			information += 1 + "\n";
+			break;
+		case AxisY:
+			information += 2 + "\n";
+			break;
+		case AxesXY:
+			information += 3 + "\n";
+			break;
+		case NoAxes:
+			information += 0 + "\n";
+			break;
+		default:
+			information += 0 + "\n";
+			break;
+		}
+
+		writer.write(information);
+		writer.flush();
+		writer.close();
+
+		return cospi.getAbsolutePath();
+	}
+
+	/**
+	 * 
+	 * @param filepath
+	 * @return
+	 */
+	public static VisConfig loadSavedProgress(String filepath) {
+		File cospiFile = new File(filepath);
+		VisConfig conf = new VisConfig();
+		Scanner myReader;
+		ArrayList<Integer> data = new ArrayList<>();
+		try {
+			myReader = new Scanner(cospiFile);
+			while (myReader.hasNextLine()) {
+				String line = myReader.nextLine();
+				data.add(Integer.parseInt(line));
+				// System.out.println(data);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+		for (int i = 0; i < data.size(); i++) {
+			switch (i) {
+			case 0:
+				conf.setMin(data.get(i));
+				break;
+			case 1:
+				conf.setMax(data.get(i));
+				break;
+			case 2:
+				conf.setAngleMax(data.get(i));
+				break;
+			case 3:
+				conf.setAngleMin(data.get(i));
+				break;
+			case 4:
+				conf.setRoadSize(data.get(i));
+				break;
+			case 5:
+				conf.setLabelColor(new Color(data.get(i)));
+				break;
+			case 6:
+				conf.setLabelDecreasingRate(data.get(i));
+				break;
+			case 7:
+				conf.setColor(new Color(data.get(i)));
+				break;
+			case 8:
+				if (data.get(i) == 0) {
+					conf.setEnableInfo(false);
+				} else {
+					conf.setEnableInfo(true);
+				}
+				break;
+			case 9:
+				if (data.get(i) == 0) {
+					conf.setShowName(false);
+				} else {
+					conf.setShowName(true);
+				}
+				break;
+			case 10:
+				if (data.get(i) == 0) {
+					conf.setShowRank(false);
+				} else {
+					conf.setShowRank(true);
+				}
+				break;
+			case 11:
+				if (data.get(i) == 0) {
+					conf.setShowVal(false);
+				} else {
+					conf.setShowVal(true);
+				}
+				break;
+			case 12:
+				if (data.get(i) == 0) {
+					conf.setAllowOverlap(false);
+				} else {
+					conf.setAllowOverlap(true);
+				}
+				break;
+			case 13:
+				if (data.get(i) == 0) {
+					conf.setShapeGaps(ShapeGaps.Minimum);
+				} else {
+					conf.setShapeGaps(ShapeGaps.Normal);
+				}
+				break;
+			case 14:
+				if (data.get(i) == 0) {
+					conf.setDrawStyle(DrawStyle.Filled);
+				} else {
+					conf.setDrawStyle(DrawStyle.Outline);
+				}
+				break;
+			case 15:
+				if (data.get(i) == 0) {
+					conf.setExpandStyle(ExpandStyle.Ring);
+				} else {
+					conf.setExpandStyle(ExpandStyle.Spiral);
+				}
+				break;
+			case 16:
+				if (data.get(i) == 0) {
+					conf.setDirection(Direction.Shrink);
+				} else {
+					conf.setDirection(Direction.Expand);
+				}
+				break;
+			case 17:
+				switch (data.get(i)) {
+				case 0:
+					conf.setAxes(Axes.NoAxes);
+					break;
+				case 1:
+					conf.setAxes(Axes.AxisX);
+					break;
+				case 2:
+					conf.setAxes(Axes.AxisY);
+					break;
+				case 3:
+					conf.setAxes(Axes.AxesXY);
+					break;
+				}
+				/* add enabled labels! */
+			}
+
+		}
+
+		return conf;
+	}
+
+	/**
+	 * Open a website using the default web browser
+	 * 
+	 * @param URL The URL of the site to be opened
+	 */
+	public static void openSiteInBrowser(String URL) {
+		if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+			try {
+				Desktop.getDesktop().browse(new URI(URL));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * A frame to save a raster image
+	 * 
+	 * @param pic The picture to be saved
+	 */
+	public static void saveImageGUI(BufferedImage pic) {
+		JFrame modelFrame = new JFrame();
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setDialogTitle("Use a .jpg extension.");
+		int userSelection = fileChooser.showSaveDialog(modelFrame);
+		if (userSelection == JFileChooser.APPROVE_OPTION) {
+			File fileToSave = fileChooser.getSelectedFile();
+			System.out.println("Save as file(add a photo extension): " + fileToSave.getAbsolutePath());
+			try {
+				ImageIO.write(pic, "jpg", fileToSave);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * A frame to select a file
+	 * 
+	 * @return the filepath of the file selected
+	 */
+	public static String fileSelectionGUI() {
+		String filepath = "";
+		try {
+
+			// java.net.URL imgURL = getClass().getResource(path);
+
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.setCurrentDirectory(new File("./Resources/DemoDatasets")); // for opening the folder Resources
+																					// that has examples
+
+			fileChooser.setDialogTitle("Select a file");
+			// int userSelection = fileChooser.showSaveDialog(null);
+			int userSelection = fileChooser.showOpenDialog(null); // prevVersion: showSaveDialog(null);
+
+			if (userSelection == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				filepath = file.getAbsolutePath();
+				System.out.println("The path of the selected file is: " + filepath);
+			}
+
+		} catch (Exception e) {
+			// e.printStackTrace();
+		}
+		return filepath; // It returns a string in order to use it easily while creating a file
+	}
+
+	/**
+	 * A frame to select a folder
+	 * 
+	 * @return the filepath of the folder
+	 */
+	public static String folderSelectionGUI() {
+		String filepath = "";
+		try {
+			JFileChooser fileChooser = new JFileChooser();
+
+			fileChooser.setDialogTitle("Select folder");
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			int userSelection = fileChooser.showSaveDialog(null);
+
+			if (userSelection == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				filepath = file.getAbsolutePath();
+				// System.out.println("The path of the selected file is: " + filepath);
+			}
+
+		} catch (Exception e) {
+			System.out.println("Folder not selected.");
+		}
+		return filepath; // It returns a string in order to use it easily while creating a file
+	}
+
+	/**
 	 * Run the app
 	 * 
 	 * @param args
@@ -1096,17 +1462,19 @@ public class CoSpiGUI extends JFrame {
 class FileConf {
 
 	String filename;
+	String firstLinesText = "Lala | Lala | Lala";
 
 	boolean toBePieChart;
 
 	int nameColumn;
 	int valueColumn;
 	int groupingColumn;
-	String firstLinesText = "Lala | Lala | Lala";
 
 	private void readFirstLines(int numOfLines) {
+
 		if (filename == null)
 			return;
+
 		firstLinesText = "";
 
 		String line = "";
@@ -1127,7 +1495,7 @@ class FileConf {
 		}
 	}
 
-	FileConf(int nameColumn, int valueColumn, int groupingColumn, boolean toBePieChart) {
+	public FileConf(int nameColumn, int valueColumn, int groupingColumn, boolean toBePieChart) {
 		this.groupingColumn = groupingColumn;
 		this.nameColumn = nameColumn;
 		this.valueColumn = valueColumn;
@@ -1135,7 +1503,7 @@ class FileConf {
 		readFirstLines(1);
 	}
 
-	FileConf(int nameColumn, int valueColumn, boolean toBePieChart, String filename) {
+	public FileConf(int nameColumn, int valueColumn, boolean toBePieChart, String filename) {
 		this.nameColumn = nameColumn;
 		this.valueColumn = valueColumn;
 		this.toBePieChart = toBePieChart;
@@ -1143,13 +1511,53 @@ class FileConf {
 		readFirstLines(1);
 	}
 
-	FileConf(int nameColumn, int valueColumn, int groupingColumn, boolean toBePieChart, String filename) {
+	public FileConf(int nameColumn, int valueColumn, int groupingColumn, boolean toBePieChart, String filename) {
 		this.groupingColumn = groupingColumn;
 		this.nameColumn = nameColumn;
 		this.valueColumn = valueColumn;
 		this.toBePieChart = toBePieChart;
 		this.filename = filename;
 		readFirstLines(1);
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public void setToBePieChart(boolean toBePieChart) {
+		this.toBePieChart = toBePieChart;
+	}
+
+	public void setNameColumn(int nameColumn) {
+		this.nameColumn = nameColumn;
+	}
+
+	public void setValueColumn(int valueColumn) {
+		this.valueColumn = valueColumn;
+	}
+
+	public void setGroupingColumn(int groupingColumn) {
+		this.groupingColumn = groupingColumn;
+	}
+
+	public String getFilename() {
+		return this.filename;
+	}
+
+	public boolean getToBePieChart() {
+		return this.toBePieChart;
+	}
+
+	public int getNameColumn() {
+		return this.nameColumn;
+	}
+
+	public int getValueColumn() {
+		return this.valueColumn;
+	}
+
+	public int getGroupingColumn() {
+		return this.groupingColumn;
 	}
 }
 

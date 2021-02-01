@@ -9,7 +9,6 @@ import java.awt.Color;
  *
  *  A class for representing pixels each having a x and y coordinate and a color.
  */
-
 public class Pixel {
     
     private int x;
