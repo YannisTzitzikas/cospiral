@@ -41,6 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import javafx.util.Pair;
+
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 
@@ -50,6 +52,7 @@ import layoutAlgs.params.Axes;
 import layoutAlgs.params.Direction;
 import layoutAlgs.params.DrawStyle;
 import layoutAlgs.params.ExpandStyle;
+import layoutAlgs.params.LabelStyle;
 import layoutAlgs.params.ShapeGaps;
 import utils.SVGGenerator;
 
@@ -192,14 +195,17 @@ public class CoSpiGUI extends JFrame {
 
 		saveVis.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// GUIUtilities.saveProgressGUI(conf,fileConf.filename,fileConf.toBePieChart);
+				saveProgressGUI(conf, fileConf);
 			}
 		});
 
 		loadVis.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String filePath = fileSelectionGUI();
-				// conf = GUIUtilities.loadSavedProgress(filePath);
+				Pair<VisConfig,FileConf>cf = null;
+				cf = loadSavedProgress(filePath);
+				conf = cf.getKey();
+				fileConf = cf.getValue();
 				MAX = conf.getMax();
 				MIN = conf.getMin();
 				visualizeOnFrame();
@@ -574,8 +580,8 @@ public class CoSpiGUI extends JFrame {
 				try {
 					String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
 					String filename = timeStamp + "_COSPI.html";
-					SVGGenerator.createSVG(conf, CoSpi.rectangles, CoSpi.N, CoSpi.pic.image,
-							folderSelectionGUI(), filename);
+					SVGGenerator.createSVG(conf, CoSpi.rectangles, CoSpi.N, CoSpi.pic.image, folderSelectionGUI(),
+							filename);
 				} catch (Exception e1) {
 					e1.printStackTrace();
 				}
@@ -1121,8 +1127,10 @@ public class CoSpiGUI extends JFrame {
 		FileOutputStream fr = new FileOutputStream(cospi);
 		OutputStreamWriter writer = new OutputStreamWriter(fr, "UTF-8");
 
-		String information = conf.getMin() + "\n" + conf.getMax() + "\n" + conf.getAngleMax() + "\n"
-				+ conf.getAngleMin() + "\n" + conf.getRoadSize() + "\n" + conf.getLabelColor().getRGB() + "\n"
+		String information = fconf.getFilename() + "\n";
+
+		information += conf.getMin() + "\n" + conf.getMax() + "\n" + conf.getAngleMax() + "\n" + conf.getAngleMin()
+				+ "\n" + conf.getRoadSize() + "\n" + conf.getLabelColor().getRGB() + "\n"
 				+ conf.getLabelDecreasingRate() + "\n" + conf.getColor().getRGB() + "\n";
 
 		if (conf.isEnableInfo())
@@ -1209,6 +1217,15 @@ public class CoSpiGUI extends JFrame {
 			break;
 		}
 
+		if (fconf.getToBePieChart())
+			information += 1 + "\n";
+		else
+			information += 0 + "\n";
+
+		information += fconf.getGroupingColumn() + "\n";
+		information += fconf.getNameColumn() + "\n";
+		information += fconf.getValueColumn() + "\n";
+
 		writer.write(information);
 		writer.flush();
 		writer.close();
@@ -1221,17 +1238,23 @@ public class CoSpiGUI extends JFrame {
 	 * @param filepath
 	 * @return
 	 */
-	public static VisConfig loadSavedProgress(String filepath) {
+	public static Pair<VisConfig, FileConf> loadSavedProgress(String filepath) {
 		File cospiFile = new File(filepath);
 		VisConfig conf = new VisConfig();
+		FileConf fconf = new FileConf();
 		Scanner myReader;
-		ArrayList<Integer> data = new ArrayList<>();
+		ArrayList<Double> data = new ArrayList<>();
 		try {
 			myReader = new Scanner(cospiFile);
+			int line = 0;
 			while (myReader.hasNextLine()) {
-				String line = myReader.nextLine();
-				data.add(Integer.parseInt(line));
-				// System.out.println(data);
+				String sline = myReader.nextLine();
+				if (line == 0)
+					fconf.setFilename(sline);
+				else
+					data.add(Double.parseDouble(sline));
+
+				line++;
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -1240,10 +1263,10 @@ public class CoSpiGUI extends JFrame {
 		for (int i = 0; i < data.size(); i++) {
 			switch (i) {
 			case 0:
-				conf.setMin(data.get(i));
+				conf.setMin((int)Math.round(data.get(i)));
 				break;
 			case 1:
-				conf.setMax(data.get(i));
+				conf.setMax((int)Math.round(data.get(i)));
 				break;
 			case 2:
 				conf.setAngleMax(data.get(i));
@@ -1252,16 +1275,16 @@ public class CoSpiGUI extends JFrame {
 				conf.setAngleMin(data.get(i));
 				break;
 			case 4:
-				conf.setRoadSize(data.get(i));
+				conf.setRoadSize((int)Math.round(data.get(i)));
 				break;
 			case 5:
-				conf.setLabelColor(new Color(data.get(i)));
+				conf.setLabelColor(new Color((int)Math.round(data.get(i))));
 				break;
 			case 6:
-				conf.setLabelDecreasingRate(data.get(i));
+				conf.setLabelDecreasingRate((int)Math.round(data.get(i)));
 				break;
 			case 7:
-				conf.setColor(new Color(data.get(i)));
+				conf.setColor(new Color((int)Math.round(data.get(i))));
 				break;
 			case 8:
 				if (data.get(i) == 0) {
@@ -1327,7 +1350,7 @@ public class CoSpiGUI extends JFrame {
 				}
 				break;
 			case 17:
-				switch (data.get(i)) {
+				switch ((int)Math.round(data.get(i))) {
 				case 0:
 					conf.setAxes(Axes.NoAxes);
 					break;
@@ -1341,12 +1364,25 @@ public class CoSpiGUI extends JFrame {
 					conf.setAxes(Axes.AxesXY);
 					break;
 				}
-				/* add enabled labels! */
+			case 18:
+				if(data.get(i) == 0)
+					fconf.setToBePieChart(false);
+				else
+					fconf.setToBePieChart(true);
+				break;
+			case 19:
+				fconf.setGroupingColumn((int)Math.round(data.get(i)));
+				break;
+			case 20:
+				fconf.setNameColumn((int)Math.round(data.get(i)));
+				break;
+			case 21:
+				fconf.setValueColumn((int)Math.round(data.get(i)));
+				break;
 			}
-
 		}
 
-		return conf;
+		return new Pair<>(conf, fconf);
 	}
 
 	/**
@@ -1518,6 +1554,9 @@ class FileConf {
 		this.toBePieChart = toBePieChart;
 		this.filename = filename;
 		readFirstLines(1);
+	}
+
+	public FileConf() {
 	}
 
 	public void setFilename(String filename) {
