@@ -19,20 +19,6 @@ import java.util.stream.Stream;
  *         A class for reading one column from a CSV file
  *
  */
-class Entity {
-	String name;
-	String category;
-
-	Entity(String name, String category) {
-		this.name = name;
-		this.category = category;
-	}
-
-	public String toString() {
-		return name + "_" + category;
-
-	}
-}
 
 public class CSVReader {
 
@@ -166,47 +152,6 @@ public class CSVReader {
 		return mapGV;
 	}
 
-	// test
-	public static Map<Integer, Map<String, String>> readDataForPieChart(String filename, int groupByCol, int ValCol,
-			int nameCol) {
-		System.out.println("READ GROUPED BY VALUES");
-		String csvFile = filename; // e.g. "Resources/citiesContinents.csv";
-
-		// PART A: Loading the data of the file (as an arraylist of arrays to string)
-		ArrayList data = CSVReader.readFile(csvFile); // arraylist of arrays to string
-		// System.out.println(data);
-		// printReadValues(data);
-
-		// Sort the dataSet
-		Map<Integer, Entity> tmpMap = new HashMap<>();
-		for (int row = 0; row < data.size(); row++) {
-			String rowGroupByVal = ((String[]) data.get(row))[groupByCol]; // the groupBy value in the current row
-			String rowVal = ((String[]) data.get(row))[ValCol]; // the value (to be visualized) in the current row
-			String name = ((String[]) data.get(row))[nameCol];
-			int rowIntVal = Integer.parseInt(rowVal);
-			tmpMap.put(rowIntVal, new Entity(name, rowGroupByVal));
-		}
-		Map<Integer, Entity> sortedMap = new TreeMap<>(Collections.reverseOrder());
-		sortedMap.putAll(tmpMap);
-
-		Map<String, ArrayList<String>> mapGV = new TreeMap<>();
-
-		tmpMap.forEach((k, v) -> {
-			if (!mapGV.containsKey(v.category)) { // if we haven't encountered this groupBy value
-				ArrayList newa = new ArrayList(); // new arraylist for the values that appear with this groupbyvalue
-				newa.add(k);
-				mapGV.put(v.category, newa); // addition to the map
-			} else { // the groupBy val already exists in the map
-				mapGV.get(v.category).add(Integer.toString(k)); // adds the rowVal to the arraylist of the groupby val
-			}
-			// System.out.println(k + " " + v );
-		});
-
-		System.out.println(mapGV);
-		// s\ System.out.println(sortedMap);
-		return null;
-	}
-
 	/**
 	 * Reads the names of values to add labels to pie chart. TO BE INCLUDED IN MAIN
 	 * IPUT METHOD
@@ -215,7 +160,6 @@ public class CSVReader {
 	 * @param groupByCol
 	 * @param name
 	 * @return
-	 * @author Manos Chatzakis
 	 */
 	public static Map<String, ArrayList<String>> readNames(String filename, int groupByCol, int name) {
 		System.out.println("READ GROUPED BY VALUES");
@@ -281,6 +225,8 @@ public class CSVReader {
 			// System.out.println("Before:" + v + "\t After:" + vn);
 		}
 	}
+	
+	
 
 	/**
 	 * It takes as input an ArrayList and prints an arraylist which either contains

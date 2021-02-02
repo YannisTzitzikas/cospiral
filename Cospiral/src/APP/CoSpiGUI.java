@@ -9,6 +9,8 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -42,17 +44,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import javafx.util.Pair;
-
-import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
-
 import layoutAlgs.CoSpi;
 import layoutAlgs.VisConfig;
 import layoutAlgs.params.Axes;
 import layoutAlgs.params.Direction;
 import layoutAlgs.params.DrawStyle;
 import layoutAlgs.params.ExpandStyle;
-import layoutAlgs.params.LabelStyle;
 import layoutAlgs.params.ShapeGaps;
 import utils.SVGGenerator;
 
@@ -66,6 +63,7 @@ import utils.SVGGenerator;
  * @supervisor Yannis Tzitzikas (tzitzik@ics.forth.gr) - Lead author of the
  *             project.
  */
+@SuppressWarnings("serial")
 public class CoSpiGUI extends JFrame {
 
 	int MAX; // Normalized max
@@ -1131,7 +1129,7 @@ public class CoSpiGUI extends JFrame {
 
 		information += conf.getMin() + "\n" + conf.getMax() + "\n" + conf.getAngleMax() + "\n" + conf.getAngleMin()
 				+ "\n" + conf.getRoadSize() + "\n" + conf.getLabelColor().getRGB() + "\n"
-				+ conf.getLabelDecreasingRate() + "\n" + conf.getColor().getRGB() + "\n";
+				+ conf.getLabelDecreasingRate() + "\n" + conf.getRectColor().getRGB() + "\n";
 
 		if (conf.isEnableInfo())
 			information += 1 + "\n";
@@ -1284,7 +1282,7 @@ public class CoSpiGUI extends JFrame {
 				conf.setLabelDecreasingRate((int)Math.round(data.get(i)));
 				break;
 			case 7:
-				conf.setColor(new Color((int)Math.round(data.get(i))));
+				conf.setRectColor(new Color((int)Math.round(data.get(i))));
 				break;
 			case 8:
 				if (data.get(i) == 0) {
