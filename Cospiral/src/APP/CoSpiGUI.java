@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +45,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import javafx.util.Pair;
+
+import org.json.*;
+
 import layoutAlgs.CoSpi;
 import layoutAlgs.VisConfig;
 import layoutAlgs.params.Axes;
@@ -200,8 +209,13 @@ public class CoSpiGUI extends JFrame {
 		loadVis.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String filePath = fileSelectionGUI();
-				Pair<VisConfig,FileConf>cf = null;
-				cf = loadSavedProgress(filePath);
+				Pair<VisConfig, FileConf> cf = null;
+				try {
+					cf = loadSavedProgress(filePath);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				conf = cf.getKey();
 				fileConf = cf.getValue();
 				MAX = conf.getMax();
@@ -1103,8 +1117,8 @@ public class CoSpiGUI extends JFrame {
 		if (userSelection == JFileChooser.APPROVE_OPTION) {
 			String filePath = fileChooser.getSelectedFile().getAbsolutePath();
 			try {
-				saveCurrentProgress(conf, fconf, filePath);
-			} catch (IOException e) {
+				saveCurrentProgress(conf, fconf, filePath + ".json");
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -1117,268 +1131,87 @@ public class CoSpiGUI extends JFrame {
 	 * @param path
 	 * @return
 	 * @throws IOException
+	 * @throws JSONException
 	 */
-	public static String saveCurrentProgress(VisConfig conf, FileConf fconf, String path) throws IOException {
+	public static void saveCurrentProgress(VisConfig conf, FileConf fconf, String path)
+			throws IOException {
 
-		File cospi = new File(path + ".cospi");
+		JSONObject cospiSave = new JSONObject();
+		
+		cospiSave.put("Dataset", fconf.getFilename());
+		cospiSave.put("Min", conf.getMin());
+		cospiSave.put("Max", conf.getMax());
+		cospiSave.put("AngleMax", conf.getAngleMax());
+		cospiSave.put("AngleMin", conf.getAngleMin());
+		cospiSave.put("RoadSize", conf.getRoadSize());
+		cospiSave.put("LabelColorRGB", conf.getLabelColor().getRGB());
+		cospiSave.put("LabelDecRate", conf.getLabelDecreasingRate());
+		cospiSave.put("RectColorRGB", conf.getRectColor().getRGB());
+		cospiSave.put("EnableInfo", conf.isEnableInfo());
+		cospiSave.put("ShowName", conf.isShowName());
+		cospiSave.put("ShowRank", conf.isShowRank());
+		cospiSave.put("ShowVal", conf.isShowVal());
+		cospiSave.put("AllowOverlap", conf.isAllowOverlap());
+		cospiSave.put("GroupCol", fconf.getGroupingColumn());
+		cospiSave.put("NameCol", fconf.getNameColumn());
+		cospiSave.put("ValueCol", fconf.getValueColumn());
+		cospiSave.put("ShapeGaps", conf.getShapeGaps().toString());
+		cospiSave.put("DrawStyle", conf.getDrawStyle().toString());
+		cospiSave.put("ExpandStyle", conf.getExpandStyle().toString());
+		cospiSave.put("Direction", conf.getDirection().toString());
+		cospiSave.put("Axes", conf.getAxes().toString());
+		cospiSave.put("ToBePieChart", fconf.getToBePieChart());
 
-		FileOutputStream fr = new FileOutputStream(cospi);
-		OutputStreamWriter writer = new OutputStreamWriter(fr, "UTF-8");
-
-		String information = fconf.getFilename() + "\n";
-
-		information += conf.getMin() + "\n" + conf.getMax() + "\n" + conf.getAngleMax() + "\n" + conf.getAngleMin()
-				+ "\n" + conf.getRoadSize() + "\n" + conf.getLabelColor().getRGB() + "\n"
-				+ conf.getLabelDecreasingRate() + "\n" + conf.getRectColor().getRGB() + "\n";
-
-		if (conf.isEnableInfo())
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		if (conf.isShowName())
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		if (conf.isShowRank())
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		if (conf.isShowVal())
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		if (conf.isAllowOverlap())
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		if (conf.getShapeGaps() == ShapeGaps.Normal)
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		switch (conf.getDrawStyle()) {
-		case Outline:
-			information += 1 + "\n";
-			break;
-		case Filled:
-			information += 0 + "\n";
-			break;
-		default:
-			information += 1 + "\n";
-			break;
-		}
-
-		switch (conf.getExpandStyle()) {
-		case Spiral:
-			information += 1 + "\n";
-			break;
-		case Ring:
-			information += 0 + "\n";
-			break;
-		default:
-			information += 1 + "\n";
-			break;
-		}
-
-		switch (conf.getDirection()) {
-		case Expand:
-			information += 1 + "\n";
-			break;
-		case Shrink:
-			information += 0 + "\n";
-			break;
-		default:
-			information += 1 + "\n";
-			break;
-		}
-
-		switch (conf.getAxes()) {
-		case AxisX:
-			information += 1 + "\n";
-			break;
-		case AxisY:
-			information += 2 + "\n";
-			break;
-		case AxesXY:
-			information += 3 + "\n";
-			break;
-		case NoAxes:
-			information += 0 + "\n";
-			break;
-		default:
-			information += 0 + "\n";
-			break;
-		}
-
-		if (fconf.getToBePieChart())
-			information += 1 + "\n";
-		else
-			information += 0 + "\n";
-
-		information += fconf.getGroupingColumn() + "\n";
-		information += fconf.getNameColumn() + "\n";
-		information += fconf.getValueColumn() + "\n";
-
-		writer.write(information);
-		writer.flush();
-		writer.close();
-
-		return cospi.getAbsolutePath();
+		Files.write(Paths.get(path), cospiSave.toString().getBytes());
 	}
 
 	/**
 	 * 
 	 * @param filepath
 	 * @return
+	 * @throws ParseException 
+	 * @throws IOException 
+	 * @throws JSONException 
 	 */
-	public static Pair<VisConfig, FileConf> loadSavedProgress(String filepath) {
-		File cospiFile = new File(filepath);
+	public static Pair<VisConfig, FileConf> loadSavedProgress(String filepath) throws IOException, ParseException {
+
 		VisConfig conf = new VisConfig();
 		FileConf fconf = new FileConf();
-		Scanner myReader;
-		ArrayList<Double> data = new ArrayList<>();
-		try {
-			myReader = new Scanner(cospiFile);
-			int line = 0;
-			while (myReader.hasNextLine()) {
-				String sline = myReader.nextLine();
-				if (line == 0)
-					fconf.setFilename(sline);
-				else
-					data.add(Double.parseDouble(sline));
 
-				line++;
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		// FileReader reader = new FileReader(filepath);
+		JSONObject cospiConf = (JSONObject) new JSONParser().parse(new FileReader(filepath));
+		
+		//conf.setLabel(labelColor, sizeDecreasingRate);
+		//conf.setLabelParams(rank, name, val, color, decRate);	
 
-		for (int i = 0; i < data.size(); i++) {
-			switch (i) {
-			case 0:
-				conf.setMin((int)Math.round(data.get(i)));
-				break;
-			case 1:
-				conf.setMax((int)Math.round(data.get(i)));
-				break;
-			case 2:
-				conf.setAngleMax(data.get(i));
-				break;
-			case 3:
-				conf.setAngleMin(data.get(i));
-				break;
-			case 4:
-				conf.setRoadSize((int)Math.round(data.get(i)));
-				break;
-			case 5:
-				conf.setLabelColor(new Color((int)Math.round(data.get(i))));
-				break;
-			case 6:
-				conf.setLabelDecreasingRate((int)Math.round(data.get(i)));
-				break;
-			case 7:
-				conf.setRectColor(new Color((int)Math.round(data.get(i))));
-				break;
-			case 8:
-				if (data.get(i) == 0) {
-					conf.setEnableInfo(false);
-				} else {
-					conf.setEnableInfo(true);
-				}
-				break;
-			case 9:
-				if (data.get(i) == 0) {
-					conf.setShowName(false);
-				} else {
-					conf.setShowName(true);
-				}
-				break;
-			case 10:
-				if (data.get(i) == 0) {
-					conf.setShowRank(false);
-				} else {
-					conf.setShowRank(true);
-				}
-				break;
-			case 11:
-				if (data.get(i) == 0) {
-					conf.setShowVal(false);
-				} else {
-					conf.setShowVal(true);
-				}
-				break;
-			case 12:
-				if (data.get(i) == 0) {
-					conf.setAllowOverlap(false);
-				} else {
-					conf.setAllowOverlap(true);
-				}
-				break;
-			case 13:
-				if (data.get(i) == 0) {
-					conf.setShapeGaps(ShapeGaps.Minimum);
-				} else {
-					conf.setShapeGaps(ShapeGaps.Normal);
-				}
-				break;
-			case 14:
-				if (data.get(i) == 0) {
-					conf.setDrawStyle(DrawStyle.Filled);
-				} else {
-					conf.setDrawStyle(DrawStyle.Outline);
-				}
-				break;
-			case 15:
-				if (data.get(i) == 0) {
-					conf.setExpandStyle(ExpandStyle.Ring);
-				} else {
-					conf.setExpandStyle(ExpandStyle.Spiral);
-				}
-				break;
-			case 16:
-				if (data.get(i) == 0) {
-					conf.setDirection(Direction.Shrink);
-				} else {
-					conf.setDirection(Direction.Expand);
-				}
-				break;
-			case 17:
-				switch ((int)Math.round(data.get(i))) {
-				case 0:
-					conf.setAxes(Axes.NoAxes);
-					break;
-				case 1:
-					conf.setAxes(Axes.AxisX);
-					break;
-				case 2:
-					conf.setAxes(Axes.AxisY);
-					break;
-				case 3:
-					conf.setAxes(Axes.AxesXY);
-					break;
-				}
-			case 18:
-				if(data.get(i) == 0)
-					fconf.setToBePieChart(false);
-				else
-					fconf.setToBePieChart(true);
-				break;
-			case 19:
-				fconf.setGroupingColumn((int)Math.round(data.get(i)));
-				break;
-			case 20:
-				fconf.setNameColumn((int)Math.round(data.get(i)));
-				break;
-			case 21:
-				fconf.setValueColumn((int)Math.round(data.get(i)));
-				break;
-			}
-		}
+		conf.setMax(((Long)cospiConf.get("Max")).intValue());
+		conf.setMin(((Long)cospiConf.get("Min")).intValue());
+		conf.setAngleMax((Double)cospiConf.get("AngleMax"));
+		conf.setAngleMin((Double)cospiConf.get("AngleMin"));
+		conf.setRoadSize(((Long)cospiConf.get("RoadSize")).intValue());
+		conf.setLabelDecreasingRate(((Long)cospiConf.get("LabelDecRate")).intValue());
+
+		conf.setShapeGaps(ShapeGaps.valueOf((String)cospiConf.get("ShapeGaps")));
+		conf.setDirection(Direction.valueOf((String)cospiConf.get("Direction")));
+		conf.setDrawStyle(DrawStyle.valueOf((String)cospiConf.get("DrawStyle")));
+		conf.setExpandStyle(ExpandStyle.valueOf((String)cospiConf.get("ExpandStyle")));
+		conf.setAxes(Axes.valueOf((String)cospiConf.get("Axes")));
+
+		conf.setRectColor(new Color(((Long)cospiConf.get("RectColorRGB")).intValue()));
+		conf.setColor(new Color(((Long)cospiConf.get("RectColorRGB")).intValue()));
+		conf.setLabelColor(new Color(((Long)cospiConf.get("LabelColorRGB")).intValue()));
+
+		conf.setAllowOverlap((Boolean)cospiConf.get("AllowOverlap"));
+		conf.setEnableInfo((Boolean)cospiConf.get("EnableInfo"));
+		conf.setShowName((Boolean)cospiConf.get("ShowName"));
+		conf.setShowRank((Boolean)cospiConf.get("ShowRank"));
+		conf.setShowVal((Boolean)cospiConf.get("ShowVal"));
+		
+		fconf.setFilename((String)cospiConf.get("Dataset"));
+		fconf.setGroupingColumn(((Long)cospiConf.get("GroupCol")).intValue());
+		fconf.setNameColumn(((Long)cospiConf.get("NameCol")).intValue());
+		fconf.setValueColumn(((Long)cospiConf.get("ValueCol")).intValue());
+		fconf.setToBePieChart((Boolean)cospiConf.get("ToBePieChart"));
 
 		return new Pair<>(conf, fconf);
 	}

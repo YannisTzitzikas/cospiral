@@ -23,7 +23,7 @@ import utils.SyntheticDataGenerator;
  * for testing
  * 
  * @author Yannis Tzitzikas (tzitzik@ics.forth.gr)
- * @author Manos Chatzakis (additions - chatzakis@ics.forth.gr)
+ * @author Manos Chatzakis (chatzakis@ics.forth.gr)
  *
  */
 public class CoSpiExamples {
