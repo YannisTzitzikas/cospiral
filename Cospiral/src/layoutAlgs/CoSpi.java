@@ -156,7 +156,7 @@ public class CoSpi {
 	 * @param createSVG
 	 * @param allowOverlap
 	 */
-	public static void  loadDataFromFilesAndCompareFrequencies(String[] filenames, int[] columns, int NormalizeMin, int NormalizeMax, VisConfig visConf, boolean usingGUI, boolean createSVG) {
+	public static void loadDataFromFilesAndCompareFrequencies(String[] filenames, int[] columns, int NormalizeMin, int NormalizeMax, VisConfig visConf, boolean usingGUI, boolean createSVG) {
 		//A. Computation of a map with the frequencies
 		
 		Map<String,ArrayList<String>> mapGV = new TreeMap<>(); 
