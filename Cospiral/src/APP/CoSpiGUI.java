@@ -17,7 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
@@ -42,6 +44,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
@@ -89,6 +93,9 @@ public class CoSpiGUI extends JFrame {
 	JMenu labelsAxesMenu;
 	JMenu exportMenu;
 	JFrame parFrame; // the frame with the parameters
+	
+	// new
+	JTextArea consoleOutputArea; 
 
 	/**
 	 * Creates the menu bar and runs the app.
@@ -125,11 +132,81 @@ public class CoSpiGUI extends JFrame {
 		initializeConfig();
 		createMenuBar(menu);
 
+		//todo: 
+		createConsoleOutput(null);
+		redirectSystemStreams();
+				
 		setJMenuBar(menu);
 		setLayout(null);
 		setVisible(true);
 	}
 
+	
+	void createConsoleOutput(JPanel parentPanel) {
+		JPanel consolePanel = new JPanel(new GridLayout(1,1,5,5)); // rows, columns, int hgap, int vgap)
+		consolePanel.setBorder(BorderFactory.createTitledBorder(
+		        BorderFactory.createEtchedBorder(), "Console output"));
+		
+		// A: OUTPUT TEXT AREA
+		//JTextArea 
+		consoleOutputArea = new JTextArea(
+			    "Console output"
+			);
+		//textOutputArea.setFont(new Font("Courier", NORMAL, 22));  //
+		//consoleOutputArea.setFont(consoleTextfont);
+		consoleOutputArea.setLineWrap(true);
+		consoleOutputArea.setWrapStyleWord(true);
+		consoleOutputArea.setEditable(false);
+		
+	
+		
+		JScrollPane areaScrollPane = new JScrollPane(consoleOutputArea);
+		areaScrollPane.setVerticalScrollBarPolicy(
+		                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		//areaScrollPane.setPreferredSize(textAreaDimension);
+		
+		consolePanel.add(areaScrollPane); 
+		//add(outputPanel); // adds to Frame
+		if (parentPanel==null) { // if no parent panel
+			this.add(consolePanel); // adds to Frame
+		} else {
+			parentPanel.add(consolePanel);
+		}
+		
+	}
+	
+	
+	private void redirectSystemStreams() {
+	    OutputStream out = new OutputStream() {
+	      @Override
+	      public void write(int b) throws IOException {
+	    	  updateConsoleTextArea(String.valueOf((char) b));
+	      }
+
+	      @Override
+	      public void write(byte[] b, int off, int len) throws IOException {
+	    	  updateConsoleTextArea(new String(b, off, len));
+	      }
+
+	      @Override
+	      public void write(byte[] b) throws IOException {
+	        write(b, 0, b.length);
+	      }
+	    };
+
+	    System.setOut(new PrintStream(out, true));
+	    System.setErr(new PrintStream(out, true));
+	  }
+	
+	private void updateConsoleTextArea(final String text) {
+	    SwingUtilities.invokeLater(new Runnable() {
+	      public void run() {
+	    	  consoleOutputArea.append(text);
+	        
+	      }
+	    });
+	  }
+	
 	/**
 	 * Initializes the conf object with default configurations.
 	 */
