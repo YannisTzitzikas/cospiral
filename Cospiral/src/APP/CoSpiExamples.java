@@ -63,20 +63,20 @@ public class CoSpiExamples {
 		 * DATASET VISUALIZATION EXAMPLES
 		 */
 		// Classic Spiral
-		CoSpi.loadDataAndRun("Resources/cities.csv", 1, 0, 3, 40, conf, false, false);
+		CoSpi.loadDataAndRun("Cospiral/Resources/cities.csv", 1, 0, 3, 40, conf, false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 
-		CoSpi.loadDataAndRun("Resources/word_frequency_shakespeare.csv", 1, 0, 1, 50, conf, false, false);
+		CoSpi.loadDataAndRun("Cospiral/Resources/word_frequency_shakespeare.csv", 1, 0, 1, 50, conf, false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 
 		// Pie Chart Spiral
-		CoSpi.loadDataAndRunPieChart("Resources/citiesContinents.csv", 1, 2, 0, 10, 40, conf, false, false);
+		CoSpi.loadDataAndRunPieChart("Cospiral/Resources/citiesContinents.csv", 1, 2, 0, 10, 40, conf, false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 
-		CoSpi.loadDataAndRunPieChart("Resources/companies.csv", 1, 2, 0, 10, 40, conf, false, false);
+		CoSpi.loadDataAndRunPieChart("Cospiral/Resources/companies.csv", 1, 2, 0, 10, 40, conf, false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 	}
@@ -179,15 +179,15 @@ public class CoSpiExamples {
 		conf.setEnableInfo(true);
 
 		// Comparing Distributions from 2 different files
-		String[] filenames = { "Resources/earthquakesCrete.csv", "Resources/cities.csv" };
+		String[] filenames = { "Cospiral/Resources/earthquakesCrete.csv", "Cospiral/Resources/cities.csv" };
 		int[] columns = { 1, 1 };
 		CoSpi.loadDataFromFilesAndCompare(filenames, columns, 1, 5, conf, false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
 
 		// Comparing Numeric Attribute Distributions form the same data file
-		String[] fileNumericData = { "Resources/numericdata.csv", "Resources/numericdata.csv",
-				"Resources/numericdata.csv", "Resources/numericdata.csv", "Resources/numericdata.csv" };
+		String[] fileNumericData = { "Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv",
+				"Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv" };
 		int[] columnsPerson = { 0, 1, 2, 3, 4 };
 		CoSpi.loadDataFromFilesAndCompare(fileNumericData, columnsPerson, 10, 50, conf, false, false);
 		TimeUnit.SECONDS.sleep(1);
@@ -195,7 +195,7 @@ public class CoSpiExamples {
 
 		// Computing the frequencies and compares them as a piechart: Feb 4, 2020
 		int[] columnsPersonData = { 0, 1, 2, 3, 4, 5 };
-		CoSpi.loadDataFromSingleFileAndCompareFrequencies("Resources/persons.csv", columnsPersonData, 10, 50, conf,
+		CoSpi.loadDataFromSingleFileAndCompareFrequencies("Cospiral/Resources/persons.csv", columnsPersonData, 10, 50, conf,
 				false, false);
 		TimeUnit.SECONDS.sleep(1);
 		CoSpi.clearOldData();
@@ -249,7 +249,7 @@ public class CoSpiExamples {
 		int repetitions = 11;
 		int minSize = 1;
 		for (int i = 0; i < repetitions; i++) {
-			CoSpi.loadDataAndRun("Resources/word_frequency_shakespeare.csv", 1, 0, minSize, 100, conf, false, false);
+			CoSpi.loadDataAndRun("Cospiral/Resources/word_frequency_shakespeare.csv", 1, 0, minSize, 100, conf, false, false);
 			TimeUnit.SECONDS.sleep(1);
 			minSize = (minSize == 1) ? 0 : 1;
 		}
