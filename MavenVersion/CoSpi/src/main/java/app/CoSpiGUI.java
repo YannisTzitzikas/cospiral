@@ -74,6 +74,7 @@ public class CoSpiGUI extends JFrame {
     JMenu designMenu;
     JMenu labelsAxesMenu;
     JMenu exportMenu;
+    
     JFrame parFrame;
     JTextArea consoleOutputArea;
 
