@@ -190,7 +190,7 @@ public class CoSpiExamples {
             pieChartCoSpiExamples();
             demoCoSpiExamples();
             zeroMinExamples();
-            //veryBigCoSpiExamples();
+            veryBigCoSpiExamples();
         } catch (Exception ex) {
             Logger.getLogger(CoSpiExamples.class.getName()).log(Level.SEVERE, null, ex);
         }
