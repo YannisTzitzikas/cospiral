@@ -5,7 +5,7 @@
  */
 package app;
 
-import commonUtils.SyntheticDataGenerator;
+import utilsCommon.SyntheticDataGenerator;
 import cospi.CoSpi;
 import cospi.VisConfig;
 import cospi.params.Axes;

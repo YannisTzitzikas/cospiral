@@ -5,7 +5,7 @@
  */
 package app;
 
-import commonUtils.SVGGenerator;
+import utilsCommon.SVGGenerator;
 import cospi.CoSpi;
 import cospi.VisConfig;
 import cospi.params.Axes;
@@ -74,7 +74,7 @@ public class CoSpiGUI extends JFrame {
     JMenu designMenu;
     JMenu labelsAxesMenu;
     JMenu exportMenu;
-    
+
     JFrame parFrame;
     JTextArea consoleOutputArea;
 
@@ -578,6 +578,10 @@ public class CoSpiGUI extends JFrame {
                     cospi.setUsingGUI(true);
                     cospi.visualizeClassic(conf, fileConf.getValueColumn(), fileConf.nameColumn, false);
                 } else {
+                    cospi.setUsingGUI(true);
+                    //new CoSpi("./datasets/DemoDatasets/companies.csv", false).
+                    cospi.visualizePieChart(conf, fileConf.getValueColumn(), fileConf.nameColumn, fileConf.getGroupingColumn(), false);
+                    //cospi.visualizeClassic(conf, fileConf.getValueColumn(), fileConf.nameColumn, false);
                     // Cospi.loadDataAndRunPieChart(fileConf.getFilename(), fileConf.getGroupingColumn(),  fileConf.getValueColumn(), fileConf.getNameColumn(), MIN, MAX, conf, true, false);
                 }
                 setContentPane(cospi.getPic().getJLabel());

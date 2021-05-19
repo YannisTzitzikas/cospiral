@@ -1,4 +1,4 @@
-package commonUtils;
+package utilsCommon;
 
 import java.util.ArrayList;
 

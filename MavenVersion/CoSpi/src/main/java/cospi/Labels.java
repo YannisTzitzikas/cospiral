@@ -1,6 +1,7 @@
 package cospi;
 
-import commonUtils.*;
+import utilsCommon.Rectangle;
+import utilsCommon.Picture;
 import cospi.params.*;
 import java.awt.Color;
 import java.awt.Font;
@@ -151,14 +152,27 @@ public class Labels {
      * @param MIN_SIZE
      */
     public static void writeInfoToImage(Image pic, int N, int size, Color color, int MAX_SIZE, int MIN_SIZE,
-            int realMax, int realMin, int K) {
+            double realMax, double realMin, int K) {
 
+        //int realMax = (int) Math.round(drealMax);
+        //int realMin = (int) Math.round(drealMin);
         // Getting the text to be drawn
         String values = "Entities: " + K;
         String nMax = "Normilized Max: " + String.valueOf(MAX_SIZE);
         String nMin = "Normilized Min: " + String.valueOf(MIN_SIZE);
-        String nRmax = "Actual Max: " + String.valueOf(realMax);
-        String nRmin = "Actual Min: " + String.valueOf(realMin);
+
+        String nRmax = "";// = "Actual Max: " + String.valueOf(realMax);
+        if (Math.round(realMax) == realMax) {
+            nRmax = "Real Max: " + Math.round(realMax);
+        } else {
+            nRmax = "Real Max: " + realMax;
+        }
+        String nRmin = "";// = "Actual Min: " + String.valueOf(realMin);
+        if (Math.round(realMin) == realMin) {
+            nRmin = "Real Min: " + Math.round(realMin);
+        } else {
+            nRmin = "Real Min: " + realMin;
+        }
 
         // Get the graphics of the image
         Graphics g = pic.getGraphics();

@@ -1,6 +1,10 @@
 package cospi;
 
-import commonUtils.*;
+import utilsCommon.Pixel;
+import utilsCommon.Rectangle;
+import utilsCommon.SyntheticDataGenerator;
+import utilsCommon.SVGGenerator;
+import utilsCommon.Picture;
 import cospi.params.*;
 import csv.CSV;
 import csv.CSVLine;
@@ -293,7 +297,7 @@ public class CoSpi {
         }
         
         if (conf.isEnableInfo() && lastCall) {
-            //Labels.writeInfoToImage(pic.image, conf.getN(), 16, Color.GRAY, conf.getMax(), conf.getMin(), (int) originalValues.get(0), (int) originalValues.get(originalValues.size() - 1), values.size());
+            Labels.writeInfoToImage(pic.image, conf.getN(), 16, Color.GRAY, conf.getMax(), conf.getMin(), originalValues.get(0), originalValues.get(originalValues.size() - 1), rectsLen.size());
         }
         
         if (createSVG && lastCall) {

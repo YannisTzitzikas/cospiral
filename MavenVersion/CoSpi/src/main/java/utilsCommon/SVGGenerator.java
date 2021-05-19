@@ -1,4 +1,4 @@
-package commonUtils;
+package utilsCommon;
 
 import cospi.VisConfig;
 import cospi.params.*;
@@ -97,7 +97,14 @@ public class SVGGenerator {
             // Initialize the labels
             String rank = rects.get(i).getRank() + "";
             String name = rects.get(i).getOriginalName();
-            String value = rects.get(i).getOriginalValue() + "";
+            //String value = rects.get(i).getOriginalValue() + "";
+            String value = "";
+            double val = rects.get(i).getOriginalValue();
+            if (Math.round(val) == val) {
+                value = Math.round(val) + "";
+            } else {
+                value = val + "";
+            }
 
             // Font simulation
             Font font = new Font("Sansserif", Font.PLAIN, side / decRate);
@@ -206,8 +213,25 @@ public class SVGGenerator {
             // Getting the text to be drawn
             String nMax = "Normalized Max: " + rects.get(0).getLen();
             String nMin = "Normilized Min: " + rects.get(rects.size() - 1).getLen();
-            String nRmax = "Real Max: " + rects.get(0).getOriginalValue();
-            String nRmin = "Real Min: " + rects.get(rects.size() - 1).getOriginalValue();
+            //String nRmax = "Real Max: " + rects.get(0).getOriginalValue();
+            //String nRmin = "Real Min: " + rects.get(rects.size() - 1).getOriginalValue();
+
+            String nRmax = "";
+            String nRmin = "";
+
+            double v = rects.get(0).getOriginalValue();
+            if (Math.round(v) == v) {
+                nRmax = "Real Max: " + Math.round(v);
+            } else {
+                nRmax = "Real Max: " + v;
+            }
+
+            v = rects.get(rects.size() - 1).getOriginalValue();
+            if (Math.round(v) == v) {
+                nRmin = "Real Min: " + Math.round(v);
+            } else {
+                nRmin = "Real Min: " + v;
+            }
 
             // Get the graphics of the image
             Graphics g1 = pic.getGraphics();
