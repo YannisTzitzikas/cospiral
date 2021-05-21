@@ -12,6 +12,7 @@ import normalization.Normalizer;
 import java.awt.Color;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -24,77 +25,200 @@ import sort.SortType;
 
 @Data
 public class CoSpi {
-    
+
     private Picture pic;
     private Pixel[][] pixels;
-    
+
     private ArrayList<Rectangle> rectangles = new ArrayList<>();
     private ArrayList<String> originalNames = new ArrayList<>();
     private ArrayList<Double> originalValues = new ArrayList<>();
     private ArrayList<Integer> rectsLen = new ArrayList<>();
     private ArrayList<Integer> radiiWhenScaleofNumberOfVisObjectChanges = new ArrayList<>();
     private ArrayList<Integer> radiiWhenScaleOfValuesChanges = new ArrayList<>();
-    
+
     private VisConfig conf;
     private CSV dataset;
     private Color defColor;
-    
+
     private int MAX_SIZE;
     private int MIN_SIZE;
-    
+
+    private int totalValues = 0;
+
     private boolean usingGUI;
-    
+
     public CoSpi(String filepath, boolean hasHeader) throws FileNotFoundException, IOException {
         dataset = new CSV(filepath, ",", hasHeader);
         dataset.parse();
         conf = new VisConfig();
         this.usingGUI = false;
     }
-    
+
     public CoSpi(CSV dataset) throws CloneNotSupportedException {
         this.dataset = (CSV) dataset.clone();
         this.conf = new VisConfig();
         this.usingGUI = false;
     }
-    
+
+    public CoSpi(InputStream is,  boolean hasHeader) throws FileNotFoundException, IOException {
+        dataset = new CSV(is, ",", hasHeader);
+        dataset.parseInStream();
+        conf = new VisConfig();
+        this.usingGUI = false;
+    }
+
     public CoSpi() {
         this.conf = new VisConfig();
         this.usingGUI = false;
     }
-    
-    public void visualizeClassic(ArrayList<Integer> rectsLen, VisConfig conf, boolean createSVG) {
-        
-        conf.setMax(rectsLen.get(0));
-        conf.setMin(rectsLen.get(rectsLen.size() - 1));
-        
-        MAX_SIZE = conf.getMax();
-        MIN_SIZE = conf.getMin();
-        
-        this.rectsLen = new ArrayList<>(rectsLen);
+
+    public void compareSingleFileFrequencies(String filename, int[] valCols, VisConfig visConf, boolean createSVG) throws FileNotFoundException, IOException {
+
+        // to create table with the same filename as many times as the number of columns
+        // and call the next method
+        String filenames[] = new String[valCols.length];
+        for (int i = 0; i < filenames.length; i++) {
+            filenames[i] = filename;
+        }
+        loadDataFromFilesAndCompareFrequencies(filenames, valCols, visConf, createSVG);
+    }
+
+    private void loadDataFromFilesAndCompareFrequencies(String[] filenames, int[] valCols, VisConfig conf, boolean createSVG) throws FileNotFoundException, IOException {
+        // A. Computation of a map with the frequencies
+
+        Map<String, ArrayList<String>> mapGV = new TreeMap<>();
+        Map<String, ArrayList<CSVLine>> data = new TreeMap<>();
+
+        for (int i = 0; i < filenames.length; i++) {
+
+            //ArrayList<String> dataFromFile = CSVReader.getValueColumn(CSVReader.readFile(filenames[i]), columns[i]);
+            CSV curr = new CSV(filenames[i], ",", false);
+
+            curr.parse();
+            curr.sort(valCols[i], SortOrder.REVERSED, SortType.NUMERIC);
+
+            ArrayList<String> vals = curr.getColumnAsString(valCols[i]);
+
+            // A. Find the distinct values and their frequencies and to then keep the
+            // frequencies
+            // A.1 computation of frequencies
+            Map<String, Integer> valFreqs = new TreeMap<String, Integer>();
+            for (String a : vals) {
+                Integer freq = valFreqs.get(a);
+                valFreqs.put(a, (freq == null) ? 1 : freq + 1);
+            }
+
+            // A.2 storage of frequencies
+            ArrayList<CSVLine> freqsOnly = new ArrayList<>();
+            for (Integer fr : valFreqs.values()) {
+                CSVLine line = new CSVLine();
+                ArrayList<String> lineData = new ArrayList<>();
+                lineData.add(fr.toString());
+                line.setLine(lineData);
+                freqsOnly.add(line);
+            }
+            // A.3 Adding the frequences to the map
+            //mapGV.put(filenames[i] + i, freqsOnly); // put them in the map. The "+i" is for the case we use the same
+            data.put(filenames[i] + i, freqsOnly);
+            // filename more than once
+        }
+
+        // Part B: It calls the method that will produce the pie chart
         this.conf = conf;
-        
+        totalValues = 0;
         pic = new Picture(conf.getN(), conf.getN());
         pixels = new Pixel[conf.getN()][conf.getN()];
-        
+
+        originalNames = new ArrayList<>();
+        originalValues = new ArrayList<>();
+        rectsLen = new ArrayList<>();
+        rectangles = new ArrayList<>();
+        radiiWhenScaleofNumberOfVisObjectChanges = new ArrayList<>();
+        radiiWhenScaleOfValuesChanges = new ArrayList<>();
+
+        createPieChart(data, usingGUI, createSVG, 0, 0);
+        System.out.println("COMPARISON FREQUENCY CHART END");
+
+    }
+
+    public void compareFrequencies(String[] filenames, int[] valCols, int[] nameCols, VisConfig conf, boolean createSVG) throws FileNotFoundException, IOException {
+
+        Map<String, ArrayList<CSVLine>> data = new TreeMap<>();
+
+        for (int i = 0; i < filenames.length; i++) {
+            CSV curr = new CSV(filenames[i], ",", false);
+
+            curr.parse();
+            curr.sort(valCols[i], SortOrder.REVERSED, SortType.NUMERIC);
+
+            ArrayList<Double> vals = curr.getColumnAsDouble(valCols[i]);
+            ArrayList<String> names = curr.getColumnAsString(nameCols[i]);
+            ArrayList<CSVLine> dataLines = new ArrayList<>();
+
+            for (int j = 0; j < names.size(); j++) {
+                CSVLine line = new CSVLine();
+                ArrayList<String> newLine = new ArrayList<>();
+
+                newLine.add(vals.get(j) + "");
+                newLine.add(names.get(j));
+
+                line.setLine(newLine);
+                dataLines.add(line);
+            }
+
+            data.put(filenames[i], dataLines);
+        }
+
+        this.conf = conf;
+        totalValues = 0;
+        pic = new Picture(conf.getN(), conf.getN());
+        pixels = new Pixel[conf.getN()][conf.getN()];
+
+        originalNames = new ArrayList<>();
+        originalValues = new ArrayList<>();
+        rectsLen = new ArrayList<>();
+        rectangles = new ArrayList<>();
+        radiiWhenScaleofNumberOfVisObjectChanges = new ArrayList<>();
+        radiiWhenScaleOfValuesChanges = new ArrayList<>();
+
+        createPieChart(data, usingGUI, createSVG, 0, 1);
+
+    }
+
+    public void visualizeClassic(ArrayList<Integer> rectsLen, VisConfig conf, boolean createSVG) {
+
+        conf.setMax(rectsLen.get(0));
+        conf.setMin(rectsLen.get(rectsLen.size() - 1));
+
+        MAX_SIZE = conf.getMax();
+        MIN_SIZE = conf.getMin();
+
+        this.rectsLen = new ArrayList<>(rectsLen);
+        this.conf = conf;
+
+        pic = new Picture(conf.getN(), conf.getN());
+        pixels = new Pixel[conf.getN()][conf.getN()];
+
         radiiWhenScaleofNumberOfVisObjectChanges = new ArrayList<>();
         radiiWhenScaleOfValuesChanges = new ArrayList<>();
         rectangles = new ArrayList<>();
-        
+
         visualize(false, true, usingGUI, false, createSVG);
     }
-    
+
     public void visualizeClassic(VisConfig conf, int valueColumn, int nameColumn, boolean createSVG) {
-        
+
         MAX_SIZE = conf.getMax();
         MIN_SIZE = conf.getMin();
-        
+        totalValues = 0;
+
         this.conf = conf;
-        
+
         pic = new Picture(conf.getN(), conf.getN());
         pixels = new Pixel[conf.getN()][conf.getN()];
-        
+
         dataset.sort(valueColumn, SortOrder.REVERSED, SortType.NUMERIC);
-        
+
         originalNames = dataset.getColumnAsString(nameColumn);
         //System.out.println(originalNames);
         originalValues = dataset.getColumnAsDouble(valueColumn);
@@ -104,33 +228,33 @@ public class CoSpi {
         radiiWhenScaleofNumberOfVisObjectChanges = new ArrayList<>();
         radiiWhenScaleOfValuesChanges = new ArrayList<>();
         rectangles = new ArrayList<>();
-        
+
         visualize(false, true, usingGUI, false, createSVG);
     }
-    
+
     public void visualizePieChart(VisConfig conf, int valueColumn, int nameColumn, int groupByColumn, boolean createSVG) throws CloneNotSupportedException {
-        
+
         this.conf = conf;
-        
+        totalValues = 0;
         pic = new Picture(conf.getN(), conf.getN());
         pixels = new Pixel[conf.getN()][conf.getN()];
-        
+
         originalNames = new ArrayList<>();
         originalValues = new ArrayList<>();
         rectsLen = new ArrayList<>();
         rectangles = new ArrayList<>();
         radiiWhenScaleofNumberOfVisObjectChanges = new ArrayList<>();
         radiiWhenScaleOfValuesChanges = new ArrayList<>();
-        
+
         dataset.sort(valueColumn, SortOrder.REVERSED, SortType.NUMERIC);
-        
+
         Map<String, ArrayList<CSVLine>> data = dataset.groupCSVByColumn(groupByColumn);
         createPieChart(data, usingGUI, createSVG, valueColumn, nameColumn);
-        
+
     }
-    
+
     private void createPieChart(Map<String, ArrayList<CSVLine>> data, boolean usingGUI, boolean createSVG, int valueColumn, int nameColumn) {
-        
+
         Map<String, ArrayList<Double>> dataValues = new TreeMap<>();
         Map<String, ArrayList<String>> dataNames = new TreeMap<>();
 
@@ -142,7 +266,7 @@ public class CoSpi {
         // Part B: The angles for each pie (hereafter with pie I mean slice)
         int pieNum = data.keySet().size();
         System.out.println("Number of pies: " + pieNum);
-        
+
         double anglePerPie = (piNum * Math.PI - angleGap) / pieNum; // h katharh gonia pou prepei na exei kathe enas
         double angleGapAfterAPie = angleGap / pieNum;
 
@@ -150,48 +274,48 @@ public class CoSpi {
         // which are needed for proper normalization
         double allValuesMax = Integer.MIN_VALUE;
         double allValuesMin = Integer.MAX_VALUE;
-        
+
         boolean keepNames = true;
-        
-        if (dataNames == null) {
+
+        if (nameColumn < 0) {
             keepNames = false;
         }
-        
+
         for (Map.Entry<String, ArrayList<CSVLine>> entry : data.entrySet()) {
             ArrayList<CSVLine> lines = entry.getValue();
             ArrayList<String> names = new ArrayList<>();
             ArrayList<Double> values = new ArrayList<>();
-            
+
             for (CSVLine line : lines) {
                 String name = line.getLine().get(nameColumn);
                 Double value = Double.parseDouble(line.getLine().get(valueColumn));
                 names.add(name);
                 values.add(value);
-                
+
                 if (value > allValuesMax) {
                     allValuesMax = value;
                 }
-                
+
                 if (value < allValuesMin) {
                     allValuesMin = value;
                 }
             }
-            
+
             dataValues.put(entry.getKey(), values);
             dataNames.put(entry.getKey(), names);
         }
 
         // PART D: Drawing of each pie
         pic.preparePixels(pixels, conf.getN(), Color.white);
-        
+
         double fromAngle = 0;
-        
+
         Color[] sliceColors = {Color.red, Color.yellow, Color.green, Color.pink, new Color(255, 255, 153), // yellow-like
             Color.cyan, Color.LIGHT_GRAY, Color.magenta, Color.orange, new Color(255, 229, 204), // mpez
             new Color(204, 255, 204), // light green
             new Color(204, 229, 255) // light blue 
     };
-        
+
         int i = 0; // the pie number
         for (String key : dataValues.keySet()) { // for each grouByVal, i.e. for each pie
 
@@ -200,7 +324,7 @@ public class CoSpi {
             // PART D.1 The data for each pie
             ArrayList<Double> vals = dataValues.get(key);
             ArrayList<String> names = dataNames.get(key);
-            
+
             System.out.println("Pie " + i + " for key " + key + "with " + vals.size() + " values, with data:\n" + vals);
 
             // PART D.2 The drawing of the data of each pie
@@ -210,7 +334,7 @@ public class CoSpi {
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
-            
+
             pieConf.setAngleMin(fromAngle); // sets the angle min for this slice
             pieConf.setAngleMax(fromAngle + anglePerPie); // sets the angle max for this slice
 
@@ -221,39 +345,45 @@ public class CoSpi {
                 originalNames.addAll(names);
             }
             originalValues.addAll(vals);
-            
+
             MIN_SIZE = conf.getMin(); // the desired range of sizes in the plot
             MAX_SIZE = conf.getMax(); // 150 for words, 80 for cities
 
             rectsLen = new ArrayList<>();
             Normalizer norm = new Normalizer(allValuesMin, allValuesMax, conf.getMin(), conf.getMax());
-            
+
             for (Double d : vals) {
                 rectsLen.add((int) norm.normalizeValue(d));
             }
-            
+
             boolean isLast = (i == pieNum - 1);
-            
+
             this.conf = pieConf;
             visualize(true, isLast, usingGUI, true, createSVG);
             i++; // the counter of the pie (just for selecting the color)
         }
-        
+
     }
-    
+
     private void visualize(boolean incremental, boolean lastCall, boolean GUIMode, boolean pieChart, boolean createSVG) {
-        
+
+        if (pieChart) {
+            totalValues += rectsLen.size();
+        } else {
+            totalValues = rectsLen.size();
+        }
+
         System.out.println("Values: " + rectsLen.size());
         System.out.println("Max size: " + rectsLen.get(0));
         System.out.println("Min size: " + rectsLen.get(rectsLen.size() - 1));
-        
+
         if ((originalValues == null) || (originalValues.isEmpty())) {
             originalValues = new ArrayList<>();
             for (Integer i : rectsLen) {
                 originalValues.add((double) i);
             }
         }
-        
+
         if ((originalNames == null) || (originalNames.isEmpty())) {
             originalNames = new ArrayList<>();
             for (Integer i : rectsLen) {
@@ -261,15 +391,14 @@ public class CoSpi {
             }
         }
 
-        //copyInfoToRects(values);
         if (!incremental) {
             pic.preparePixels(pixels, conf.getN(), Color.white);
         }
-        
+
         if (!pieChart) {
             defColor = conf.getRectColor();
         }
-        
+
         cospiCompact(
                 conf.getDirection(),
                 conf.getExpandStyle(),
@@ -280,40 +409,40 @@ public class CoSpi {
                 conf.getAxes(),
                 conf.isAllowOverlap()
         );
-        
+
         if (conf.getAxes() != Axes.NoAxes) {
             MathUtils.visualizeAxes(rectsLen, conf, radiiWhenScaleOfValuesChanges,
                     radiiWhenScaleofNumberOfVisObjectChanges, pixels, conf.getN());
         }
-        
+
         pic.updatePixels(pixels, conf.getN());
-        
+
         if (conf.includeLabels() && lastCall) {
             Labels.addLabels(conf, rectangles, pic, conf.getN());
         }
-        
+
         if (!GUIMode && lastCall) {
             pic.show();
         }
-        
+
         if (conf.isEnableInfo() && lastCall) {
-            Labels.writeInfoToImage(pic.image, conf.getN(), 16, Color.GRAY, conf.getMax(), conf.getMin(), originalValues.get(0), originalValues.get(originalValues.size() - 1), rectsLen.size());
+            Labels.writeInfoToImage(pic.image, conf.getN(), 16, Color.GRAY, conf.getMax(), conf.getMin(), originalValues.get(0), originalValues.get(originalValues.size() - 1), totalValues);
         }
-        
+
         if (createSVG && lastCall) {
             try {
-                SVGGenerator.createSVG(conf, rectangles, conf.getN(), pic.image, "C:\\Users\\manos\\Desktop", "SVGNew.html");
+                SVGGenerator.createSVG(conf, rectangles, conf.getN(), pic.image, "C:\\temp", "SVGNew.html");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    
+
     private void cospiCompact(Direction directionMode, ExpandStyle expandStyle, DrawStyle drawStyle, int roadSz, double AngleMin, double AngleMax, Axes axes, boolean allowedOverlap) {
-        
+
         int K = rectsLen.size();
         int N = conf.getN();
-        
+
         int curSquareSize = conf.getMax(); // building size: initially the biggest
         int roadSize = roadSz; // road size (i.e. gaps between buildings), default = 5
         int szMax = conf.getMin(); // just for avoiding to use Max_Sq_Sz
@@ -329,9 +458,9 @@ public class CoSpi {
 
         Direction direction = directionMode; // either Direction.Expand (for RING) or Direction.Shrink (for ANCIENT  THEATER)
         curAngle = AngleMin;
-        
+
         System.out.println("CoSpi visualizer begins.");
-        
+
         while ((curBuildingIndex < K) && (!outOfPaper)) { // while there are buildings to draw
 
             minChordIncrement = rectsLen.get(curBuildingIndex); // the side of the square to be drawn (for placing it
@@ -345,18 +474,18 @@ public class CoSpi {
                 fillAsARing(curBuildingIndex, radiusForTheFilledRing); // calling the method that draws the filled ring.
                 break;
             }
-            
+
             if (curBuildingIndex > 0) { // i.e. if not the first building
                 minChordIncrement += curSquareSize; // addition of the size of the previously drawn square
                 // Mathematically Minimum:
                 // minChordIncrement= minChordIncrement + (int)
                 // ((curSquareSize+rects.get(curBuildingIndex).len)/Math.sqrt(2));
             }
-            
+
             angleIncrement = MathUtils.degreesOfChord(minChordIncrement, rad); // degrees corresponding to the chord
             // with size minChordIncrement
             curAngle = curAngle + angleIncrement;
-            
+
             if (curAngle >= AngleMax) { // if true then a new ring should be started
                 switch (direction) {
                 case Expand:
@@ -370,18 +499,18 @@ public class CoSpi {
                     rad -= roadSize;
                     break;
                 }
-                
+
                 if (rad < rectsLen.get(curBuildingIndex)) { // we are in shrink mode and we have reached the center
                     rad = (int) 1 * rectsLen.get(0);
                     direction = Direction.Expand; // we change mode: from shrink to expansion.
                 }
-                
+
                 maxSqSizeInRing = rectsLen.get(curBuildingIndex); // this is the max size of squares in this new ring
 
                 if (rad > N / 2 - maxSqSizeInRing) { // out of canvas
                     System.out.println("OUT OF PAPER.");
                 }
-                
+
                 curAngle = AngleMin; //
                 minChordIncrement = rectsLen.get(curBuildingIndex); // the size of this square
                 angleIncrement = MathUtils.degreesOfChord(minChordIncrement, rad); // for placing the first square
@@ -404,17 +533,17 @@ public class CoSpi {
                 System.out.println("Occupied spot (or not in canvas).");
                 curBuildingIndex--; // for trying to find free space in the next iteration(s) of the loop
             }
-            
+
         }
         System.out.println("Visualization completed normally.");
     }
-    
+
     private void fillAsARing(int curIndex, int curRadius) {
-        
+
         System.out.println("FILL-AS-RING with INDEX:" + curIndex + " and RADIUS: " + curRadius);
         int numOfPointsWithZero = originalValues.size() - curIndex;
         System.out.println("Number of values with normalized value zero: " + numOfPointsWithZero);
-        
+
         int sumOfOriginalValues = 0;
         for (int i = curIndex; i < originalValues.size(); i++) {
             sumOfOriginalValues += originalValues.get(i); // for computing the size of the area to be filled
@@ -439,23 +568,23 @@ public class CoSpi {
         }
         System.out.println("Filled Ring: Starting Radius: " + curRadius);
         System.out.println("Filled Ring: Outer Radius   : " + radiusOuter);
-        
+
         MathUtils.fillRing(curRadius, radiusOuter, pixels, conf.getN());
 
         // BOOK KEEPING FOR AXES
         ArrayList<Integer> axisPoints = new ArrayList<>();
         for (int i = curIndex; i < originalValues.size(); i++) {
-            
+
             double curIlog = Math.log10(i); // log 10
             int curIlogInt = (int) curIlog; // integer part of log 10
             if (curIlog - curIlogInt == 0) { // curIndex is a power of 10 (todo: 2 check precision issues)
                 axisPoints.add(i); // keeping this point for the axes
             }
-            
+
         }
         int numOfAxisPoints = axisPoints.size(); // the number of axes points required
         System.out.println(">>>AXES POINT REQUIRED " + numOfAxisPoints);
-        
+
         int uniformStep = (radiusOuter - curRadius) / numOfAxisPoints; // uniform
 
         int i = 1;
@@ -465,18 +594,18 @@ public class CoSpi {
             i++;
         }
     }
-    
+
     private void drawRectangleCenter(int x, int y, Rectangle r, DrawStyle d) {
         int leftx = x - (r.getLen() / 2);
         int bottomy = y - (r.getLen() / 2);
-        
+
         if (d == DrawStyle.Outline) {
             drawRectangle(leftx, bottomy, r);
         } else if (d == DrawStyle.Filled) {
             drawFilledRectangle(leftx, bottomy, r);
         }
     }
-    
+
     private void drawFilledRectangle(int x, int y, Rectangle r) {
         if ((x > 0) && (y > 0) && ((x + r.getLen()) < conf.getN()) && ((y + r.getLen()) < conf.getN())) {
             for (int i = 0; i < r.getLen(); i++) {
@@ -487,7 +616,7 @@ public class CoSpi {
             }
         }
     }
-    
+
     private void drawRectangle(int x, int y, Rectangle r) {
         if ((x > 0) && (y > 0) && ((x + r.getLen()) < conf.getN()) && ((y + r.getLen()) < conf.getN())) {
             for (int i = 0; i < r.getLen(); i++) {
@@ -499,15 +628,15 @@ public class CoSpi {
                 pixels[x + i][y + r.getLen()].setOccupied(true);
                 pixels[x + r.getLen()][y + i].setColor(defColor);
                 pixels[x + r.getLen()][y + i].setOccupied(true);
-                
+
                 for (int j = 0; j < r.getLen(); j++) {
                     pixels[x + i][y + j].setOccupied(true);
                 }
             }
-            
+
         }
     }
-    
+
     private void keepInfoForAxes(int curIndex, int rectLen, int radius) {
         curIndex = Math.min(curIndex, originalValues.size() - 1); // just for robustness (PATCH)
 
@@ -534,7 +663,7 @@ public class CoSpi {
             }
         }
     }
-    
+
     private void keepInfoForRects(int x, int y, int len, int rank) {
         int curIndex = rectangles.size();
         if (curIndex >= originalValues.size() || curIndex >= originalNames.size()) {
@@ -544,22 +673,22 @@ public class CoSpi {
                     defColor));
         }
     }
-    
+
     private ArrayList<Integer> normalizeList(ArrayList<Double> values) {
         ArrayList<Integer> normalized = new ArrayList<>();
         Normalizer norm = new Normalizer(values.get(values.size() - 1), values.get(0), conf.getMin(), conf.getMax());
-        
+
         for (Double d : values) {
             normalized.add((int) norm.normalizeValue(d));
         }
-        
+
         return normalized;
     }
-    
+
     public void clusteredLODUniform() {
         pic = new Picture(conf.getN(), conf.getN());
         pixels = new Pixel[conf.getN()][conf.getN()];
-        
+
         pic.preparePixels(pixels, conf.getN(), Color.white);
         rectsLen = SyntheticDataGenerator.DecreasingByPercentage(100, 40, 2, 20); // size, maxsize, minsize,
         // decreasePercentage
@@ -567,7 +696,7 @@ public class CoSpi {
         //copyInfoToRects(vals);
         int K = rectsLen.size();
         System.out.println("SIZE RECTS:" + K);
-        
+
         int piNum = 1; // for changing the angle range of the entire diagram (default = 2pi)
 
         double angleGap = piNum * Math.PI / 20.0; // to 5% tou diskou tha einai diakena
@@ -576,7 +705,7 @@ public class CoSpi {
         double anglePerDomain = (piNum * Math.PI - angleGap) / DNum; // h katharh gonia pou prepei na exei kathe ena
         // domain
         double angleGapAfterADomain = angleGap / DNum;
-        
+
         double fromAngle = 0;
         for (int i = 0; i < DNum; i++) {
             switch (i) {
@@ -622,13 +751,13 @@ public class CoSpi {
         //LabelAlgorithms.writeInfoToImageSynthetic(pic.image, N, 16, Color.GRAY, rects.get(0).getLen(),  rects.get(rects.size() - 1).getLen());
         pic.show();
     }
-    
+
     public void clusteredLOD() {
         pic = new Picture(conf.getN(), conf.getN());
         pixels = new Pixel[conf.getN()][conf.getN()];
-        
+
         pic.preparePixels(pixels, conf.getN(), Color.white);
-        
+
         rectsLen = SyntheticDataGenerator.DecreasingByPercentage(100, 40, 2, 20); // size, maxsize, minsize,
         // decreasePercentage
         //copyInfoToRects(vals);
@@ -647,13 +776,13 @@ public class CoSpi {
         // for not uniform:
         int Kbefore = K;
         int Kfake = 10;
-        
+
         int multiplier = 2; // how many times the bigger sector will be
 
         K = Kfake;
         double fromAngle = 0;
         for (int i = 0; i < DNum; i++) {
-            
+
             switch (i) {
             case 0:
                 defColor = Color.red;
@@ -683,7 +812,7 @@ public class CoSpi {
                 defColor = Color.orange;
                 break;
             }
-            
+
             cospiCompact(Direction.Expand, ExpandStyle.Spiral, DrawStyle.Filled, 5, fromAngle,
                     fromAngle + anglePerDomain, Axes.NoAxes, false); // This is the stable version
             fromAngle = fromAngle + anglePerDomain + angleGapAfterADomain;
@@ -694,11 +823,11 @@ public class CoSpi {
         //LabelAlgorithms.writeInfoToImageSynthetic(pic.image, conf.getN(), 16, Color.GRAY, rects.get(0).getLen(), rects.get(rects.size() - 1).getLen());
         pic.show();
     }
-    
+
 }
 
 class MathUtils {
-    
+
     public static ArrayList<Integer> Normalize(ArrayList<Double> a, int min, int max, double dataMinD, double dataMaxD) {
         ArrayList<Integer> norm = new ArrayList<>();
         int dataMin = (int) Math.round(dataMinD);
@@ -711,11 +840,11 @@ class MathUtils {
         }
         return norm;
     }
-    
+
     public static double degreesOfChord(int chord, int radius) {
         return Math.toDegrees(2 * Math.asin(Math.toRadians(1 * ((0.0 + chord) / (2 * radius)))));
     }
-    
+
     public static boolean isEmpty(int x, int y, int len, Pixel[][] pixels, int N) {
         // len = len +2 ; // gia einai aneto? To check
         int xleft = x - ((int) (len / 2.0));
@@ -739,7 +868,7 @@ class MathUtils {
                 // corner
                 );
     }
-    
+
     public static void visualizeAxes(ArrayList vals, VisConfig conf, ArrayList<Integer> radiiWhenScaleOfValuesChanges, ArrayList<Integer> radiiWhenScaleofNumberOfVisObjectChanges, Pixel pixels[][], int N) {
         // System.out.println("VISUALIZATION OF AXES");
         // NUM OF OBJECTS SCALE (AxisX)
@@ -767,7 +896,7 @@ class MathUtils {
             }
         }
     }
-    
+
     public static void auxiliaryCircle(int rad, Color color, int width, double angleMin, double angleMax, Pixel pixels[][], int N) {
         int paxos = 2; // to control the density of dots even for a single circle
 
@@ -794,19 +923,19 @@ class MathUtils {
             }
         }
     }
-    
+
     public static boolean isInCanvas(int x, int y, int N) {
         return ((x >= 0) && (y >= 0) && (x < N) && (y < N));
     }
-    
+
     public static void fillRing(int radiusFrom, int radiusTo, Pixel pixels[][], int N) {
         for (int i = radiusFrom; i < radiusTo; i++) {
             auxiliaryCircle(i, Color.blue, 1, pixels, N);
         }
     }
-    
+
     public static void auxiliaryCircle(int rad, Color color, int width, Pixel pixels[][], int N) {
         auxiliaryCircle(rad, color, width, 0, 2 * Math.PI, pixels, N);
     }
-    
+
 }

@@ -28,14 +28,18 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -81,7 +85,7 @@ public class CoSpiGUI extends JFrame {
     public CoSpiGUI() {
 
         ImageIcon icon;
-        String path = "/Image.png";
+        String path = "/icons/Image.png";
         java.net.URL imgURL = getClass().getResource(path);
         System.out.println(getClass());
         if (imgURL != null) {
@@ -147,6 +151,7 @@ public class CoSpiGUI extends JFrame {
         projectMenu.setMnemonic('F');
 
         JMenu newFile = new JMenu("Open");
+
         JMenuItem classic = new JMenuItem("Classic (visualize two name-value columns from a file)");
         classic.setToolTipText("Allows you to visualize two name-value columns from a file");
 
@@ -159,9 +164,19 @@ public class CoSpiGUI extends JFrame {
         JMenuItem loadVis = new JMenuItem("Load Visualization..");
         loadVis.setToolTipText("Load a CoSpi visualization from file system");
 
+        JMenu loadDemo = new JMenu("Load Demo");
+        loadDemo.setToolTipText("Load a demo dataset to try our software");
+
+        JMenuItem citiesDemo = new JMenuItem("Cities dataset demo");
+        citiesDemo.setToolTipText("A dataset containing the 1000 biggest cities on population");
+
+        //JMenuItem citiesDemo = new JMenuItem("Cities dataset demo");
+        //citiesDemo.setToolTipText("A dataset containing the 1000 biggest cities on population");
         classic.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileConf = new FileConf(0, 1, false, fileSelectionGUI());
+                fileConf.setUsingInputStream(false);
+
                 columnParametersClassic();
 
             }
@@ -170,6 +185,7 @@ public class CoSpiGUI extends JFrame {
         pieChart.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 fileConf = new FileConf(0, 2, 1, true, fileSelectionGUI());
+                fileConf.setUsingInputStream(false);
                 columnParametersPieChart();
 
             }
@@ -201,12 +217,67 @@ public class CoSpiGUI extends JFrame {
             }
         });
 
+        citiesDemo.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                /*File ff = null;
+                URL resource = getClass().getResource("/datasets/DemoDatasets/cities.csv");
+                if (resource == null) {
+                    throw new IllegalArgumentException("Cities file not found!");
+                } else {
+
+                    try {
+                       
+                        ff = new File(resource.toURI());
+                    } catch (URISyntaxException ex) {
+                        Logger.getLogger(CoSpiGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+
+                fileConf.setFilename(ff.getAbsolutePath());
+                fileConf.setToBePieChart(false);
+                fileConf.setNameColumn(0);
+                fileConf.setValueColumn(1);
+                fileConf.setHasHeader(false);
+
+                initializeConfig();
+                conf.setMax(60);
+                conf.setMin(2);
+
+                visualizeOnFrame();*/
+ /*URL resource = getClass().getResource("/datasets/DemoDatasets/cities.csv");
+                if (resource == null) {
+                    throw new IllegalArgumentException("Cities file not found!");
+                }
+                //InputStream is = null;
+                try {
+                    fileConf.setIs(resource.openStream()); //getFileFromResourceAsStream("/datasets/DemoDatasets/cities.csv");
+                } catch (IOException ex) {
+                    Logger.getLogger(CoSpiGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }*/
+
+                fileConf.setFilename("/datasets/DemoDatasets/cities.csv");
+                fileConf.setUsingInputStream(true);
+                fileConf.setToBePieChart(false);
+                fileConf.setNameColumn(0);
+                fileConf.setValueColumn(1);
+                fileConf.setHasHeader(false);
+
+                initializeConfig();
+                conf.setMax(60);
+                conf.setMin(2);
+
+                visualizeOnFrame();
+
+            }
+        });
+
         newFile.add(classic);
         newFile.add(pieChart);
+        loadDemo.add(citiesDemo);
         projectMenu.add(newFile);
         projectMenu.add(saveVis);
         projectMenu.add(loadVis);
-
+        projectMenu.add(loadDemo);
         menu.add(projectMenu);
     }
 
@@ -572,7 +643,22 @@ public class CoSpiGUI extends JFrame {
         // The runnable that contains the code that prepares the drawing
         Runnable runnable4Visualization = () -> {
             try {
-                cospi = new CoSpi(fileConf.getFilename(), fileConf.isHasHeader());
+                if (!fileConf.isUsingInputStream()) {
+                    cospi = new CoSpi(fileConf.getFilename(), fileConf.isHasHeader());
+                } else {
+                    InputStream is = null;
+                    URL resource = getClass().getResource(fileConf.getFilename());
+                    if (resource == null) {
+                        throw new IllegalArgumentException("Resources file not found!");
+                    }
+                    try {
+                        is = resource.openStream(); //getFileFromResourceAsStream("/datasets/DemoDatasets/cities.csv");
+                    } catch (IOException ex) {
+                        Logger.getLogger(CoSpiGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                    cospi = new CoSpi(is, fileConf.isHasHeader());
+                }
                 if (!fileConf.isToBePieChart()) {
                     //Cospi.loadDataAndRun(fileConf.getFilename(), fileConf.getValueColumn(), fileConf.getNameColumn(),MIN, MAX, conf, true, false);
                     cospi.setUsingGUI(true);
@@ -583,6 +669,65 @@ public class CoSpiGUI extends JFrame {
                     cospi.visualizePieChart(conf, fileConf.getValueColumn(), fileConf.nameColumn, fileConf.getGroupingColumn(), false);
                     //cospi.visualizeClassic(conf, fileConf.getValueColumn(), fileConf.nameColumn, false);
                     // Cospi.loadDataAndRunPieChart(fileConf.getFilename(), fileConf.getGroupingColumn(),  fileConf.getValueColumn(), fileConf.getNameColumn(), MIN, MAX, conf, true, false);
+                }
+                setContentPane(cospi.getPic().getJLabel());
+                SwingUtilities.updateComponentTreeUI(this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+
+        // The thread
+        Thread thread4Visualization = new Thread(runnable4Visualization);
+
+        // A new thread that will be used for measuring time without blocking the
+        // current GUI thread
+        Thread threadController = new Thread(() -> {
+            thread4Visualization.start();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } // 1 sec delay for the algorithm.
+            if (thread4Visualization.isAlive()) {
+                System.out.println("I WILL STOP THE THREAD");
+                JOptionPane.showMessageDialog(this,
+                        "The sizes that you have specified are too big to fit in the canvas. Reduce the sizes and try again.",
+                        "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+            thread4Visualization.stop(); // stopping the visualization thread
+        });
+        threadController.start();
+
+        // Menu-related adjustements
+        this.fileSelected = true; // a file has been loaded (ytz)
+        JMenu[] menus = {designMenu, labelsAxesMenu, exportMenu}; // the menus that should be enabled only if a file
+        // has been selected
+        for (JMenu menu : menus) {
+            if (menu != null) {
+                menu.setEnabled(true); // enabling the other menus:
+            }
+        }
+        if (parFrame == null) // i.e. if not already opened
+        {
+            setLayoutParameters(); // opens directly the LayoutParams frame
+        }		// ytz end
+        SwingUtilities.updateComponentTreeUI(this);
+    }
+
+    private void visualizeOnFrame(InputStream is) {
+
+        // Motivation: to avoid blocking if sizes are too big
+        // The runnable that contains the code that prepares the drawing
+        Runnable runnable4Visualization = () -> {
+            try {
+                cospi = new CoSpi(is, fileConf.isHasHeader());
+                if (!fileConf.isToBePieChart()) {
+                    cospi.setUsingGUI(true);
+                    cospi.visualizeClassic(conf, fileConf.getValueColumn(), fileConf.nameColumn, false);
+                } else {
+                    cospi.setUsingGUI(true);
+                    cospi.visualizePieChart(conf, fileConf.getValueColumn(), fileConf.nameColumn, fileConf.getGroupingColumn(), false);
                 }
                 setContentPane(cospi.getPic().getJLabel());
                 SwingUtilities.updateComponentTreeUI(this);
@@ -1032,7 +1177,10 @@ public class CoSpiGUI extends JFrame {
 
             //java.net.URL imgURL = getClass().getResource(path);
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setCurrentDirectory(new File("./datasets")); // for opening the folder Resources
+            //String path = this.getClass().getClassLoader().getResource("/datasets/").toExternalForm();
+            //ClassLoader classLoader = getClass().getClassLoader();
+            //File f = new File(classLoader.getResource("datasets/").getFile());
+            fileChooser.setCurrentDirectory(new File("./src/main/resources/datasets")); // for opening the folder Resources //
             // that has examples
 
             fileChooser.setDialogTitle("Select a file");
@@ -1132,8 +1280,24 @@ public class CoSpiGUI extends JFrame {
         });
     }
 
+    private InputStream getFileFromResourceAsStream(String fileName) {
+
+        // The class loader that loaded the class
+        ClassLoader classLoader = getClass().getClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream(fileName);
+        //InputStream cpResource = this.getClass().getClassLoader().getResourceAsStream("file.name");
+
+        // the stream holding the file content
+        if (inputStream == null) {
+            throw new IllegalArgumentException("file not found! " + fileName);
+        } else {
+            return inputStream;
+        }
+
+    }
+
     public static void main(String[] args) {
-        //AppWelcome t = new AppWelcome();
+        AppWelcome t = new AppWelcome();
         CoSpiGUI app = new CoSpiGUI();
     }
 
@@ -1145,7 +1309,7 @@ class AppWelcome extends JFrame {
         Image image = null;
         try {
             // Setting the image in the window
-            URL imgURL = getClass().getResource("/Image.png");
+            URL imgURL = getClass().getResource("/icons/Image.png");
             image = ImageIO.read(imgURL);
 
             // Setting the ICON
@@ -1178,6 +1342,9 @@ class FileConf {
     String filename;
     String firstLinesText = "Lala | Lala | Lala";
 
+    InputStream is;
+
+    boolean usingInputStream;
     boolean toBePieChart;
     boolean hasHeader = false;
 

@@ -36,11 +36,6 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>CSVEditor</groupId>
-            <artifactId>CSVEditor</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1</version>
@@ -52,6 +47,45 @@
             <version>20201115</version>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>CSVEditor</groupId>
+            <artifactId>CSVEditor</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
+    
+    <build>
+        <defaultGoal>compile</defaultGoal>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>app.CoSpiGUI</mainClass>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <BuildTime>${maven.build.timestamp}</BuildTime>
+                        </manifestEntries>
+                    </archive>
+                    <descriptors>
+                        <descriptor>src/main/assembly/exejar.xml</descriptor>
+                    </descriptors>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-my-jar-with-dependencies</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     
 </project>

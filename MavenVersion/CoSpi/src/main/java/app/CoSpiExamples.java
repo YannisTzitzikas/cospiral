@@ -47,13 +47,13 @@ public class CoSpiExamples {
         conf.setEnableInfo(true);
         conf.setLabelParams(true, true, true, Color.black, 4);
 
-        new CoSpi("./datasets/DemoDatasets/cities.csv", false).visualizeClassic(conf, 1, 0, false);
+        new CoSpi("./src/main/resources/datasets/DemoDatasets/cities.csv", false).visualizeClassic(conf, 1, 0, false);
         TimeUnit.SECONDS.sleep(1);
 
         conf.setMax(70);
         conf.setMin(1);
 
-        new CoSpi("./datasets/DemoDatasets/word_frequencies_shakespeare.csv", false).visualizeClassic(conf, 1, 0, false);
+        new CoSpi("./src/main/resources/datasets/DemoDatasets/word_frequencies_shakespeare.csv", false).visualizeClassic(conf, 1, 0, false);
         TimeUnit.SECONDS.sleep(1);
 
     }
@@ -76,13 +76,13 @@ public class CoSpiExamples {
         conf.setEnableInfo(false);
         conf.setLabelParams(true, true, true, Color.black, 4);
 
-        new CoSpi("./datasets/DemoDatasets/companies.csv", false).visualizePieChart(conf, 2, 0, 1, false);
+        new CoSpi("./src/main/resources/datasets/DemoDatasets/companies.csv", false).visualizePieChart(conf, 2, 0, 1, false);
         TimeUnit.SECONDS.sleep(1);
 
         conf.setMax(50);
         conf.setMin(20);
 
-        new CoSpi("./datasets/DemoDatasets/citiesContinents-forPieChart.csv", false).visualizePieChart(conf, 2, 0, 1, false);
+        new CoSpi("./src/main/resources/datasets/DemoDatasets/citiesContinents-forPieChart.csv", false).visualizePieChart(conf, 2, 0, 1, false);
         TimeUnit.SECONDS.sleep(1);
     }
 
@@ -109,7 +109,7 @@ public class CoSpiExamples {
         conf.setMin(1);
         conf.setMax(100);
         int repetitions = 11;
-        CoSpi cospi = new CoSpi("./datasets/DemoDatasets/word_frequencies_shakespeare.csv", false);
+        CoSpi cospi = new CoSpi("./src/main/resources/datasets/DemoDatasets/word_frequencies_shakespeare.csv", false);
         for (int i = 0; i < repetitions; i++) {
             cospi.visualizeClassic(conf, 1, 0, false);
             TimeUnit.SECONDS.sleep(1);
@@ -183,6 +183,47 @@ public class CoSpiExamples {
 
     }
 
+    /**
+     * Value comparison examples
+     *
+     * @throws InterruptedException
+     */
+    public static void comparisonExamples() throws InterruptedException, IOException {
+        // Example of creating a config object
+        VisConfig conf = new VisConfig();
+        conf.setDrawStyle(DrawStyle.Filled); // Filled vs Outline
+        conf.setDirection(Direction.Expand); // Expand vs Shink
+        conf.setExpandStyle(ExpandStyle.Spiral); // vs Spiral v Ring
+        conf.setShapeGaps(ShapeGaps.Normal); // Normal vs Minium
+        conf.setRoadSize(5);
+        conf.setAngleMin(0);
+        conf.setAngleMax(2 * Math.PI); // 2*Math.PI
+        conf.setAxes(Axes.NoAxes); // AxesXY
+        conf.setLabelParams(false, false, false, Color.black, 1);
+        conf.setEnableInfo(true);
+        conf.setMax(5);
+        conf.setMin(1);
+        conf.setN(1000);
+        // Comparing Distributions from 2 different files
+        String[] filenames = {"./src/main/resources/datasets/DemoDatasets/earthquakesCrete.csv", "./src/main/resources/datasets/DemoDatasets/cities.csv"};
+        int[] columns = {1, 1};
+        int[] names = {0, 0};
+        //CoSpi.loadDataFromFilesAndCompare(filenames, columns, 1, 5, conf, false, false);
+        new CoSpi().compareFrequencies(filenames, columns, names, conf, true);
+        TimeUnit.SECONDS.sleep(1);
+
+        // Comparing Numeric Attribute Distributions form the same data file
+        String[] fileNumericData = {"Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv", "Cospiral/Resources/numericdata.csv"};
+        int[] columnsPerson = {0, 1, 2, 3, 4};
+        //CoSpi.loadDataFromFilesAndCompare(fileNumericData, columnsPerson, 10, 50, conf, false, false);
+        //TimeUnit.SECONDS.sleep(1);
+
+        // Computing the frequencies and compares them as a piechart: Feb 4, 2020
+        int[] columnsPersonData = {0, 1, 2, 3, 4, 5};
+        //CoSpi.loadDataFromSingleFileAndCompareFrequencies("Cospiral/Resources/persons.csv", columnsPersonData, 10, 50, conf, false, false);
+        //TimeUnit.SECONDS.sleep(1);
+    }
+
     public static void main(String[] args) {
         try {
             syntheticCoSpiExamples();
@@ -191,6 +232,7 @@ public class CoSpiExamples {
             demoCoSpiExamples();
             zeroMinExamples();
             veryBigCoSpiExamples();
+            comparisonExamples();
         } catch (Exception ex) {
             Logger.getLogger(CoSpiExamples.class.getName()).log(Level.SEVERE, null, ex);
         }
