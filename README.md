@@ -8,9 +8,20 @@ Before you procceed, make sure that your machine has the following requirements:
 * [Java](https://www.java.com/en/) (>=8) - Core Programming Language
 * [Maven](https://maven.apache.org/) - Dependency Management 
 
+
+## Dependencies
+
+Apart from the libraries used by the exploitation of [Maven](https://maven.apache.org/), shown in pom file, CoSpi uses [CSVEditor](https://github.com/MChatzakis/CSVEditor) to sort (and generally manipulate) the input dataset. 
+
+Note: In case of build errors, you may download and add as dependency the project from the aforementioned repository.
+
+
 ## Input Dataset
 
+By default, CoSpi supports CSV datasets as input. The tool is capaple of sorting the files before the visualization begins, using out [CSVEditor](https://github.com/MChatzakis/CSVEditor) library. The CSV dataset can also have header line, which can be ignored. We provide numerous examples of supported datasets in the corresponding folder.
+
 ## Configuration
+
 CoSpi API supports CSV datasets (aka Comma Separated Values) and has many configurable options using VisConfig class:
 
 ``` java
