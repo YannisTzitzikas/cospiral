@@ -41,7 +41,7 @@ boolean hasHeader = false; /*Whether or not input file has header on the first l
 CoSpi cospi = new CoSpi(filepath, hasHeader);
 ```
 
-### Classic Visualization
+#### Classic Visualization
 ``` java
 int namesColumn = 0;
 int valuesColumn = 1;
@@ -50,7 +50,7 @@ boolean createSVG = true;
 cospi.visualizePieChart(conf, valuesColumn, namesColumn, createSVG);
 ```
 
-### Classic Visualization
+#### Pie Chart Visualization
 ``` java
 int namesColumn = 0;
 int valuesColumn = 1;
