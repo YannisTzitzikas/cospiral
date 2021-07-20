@@ -1,6 +1,6 @@
 # CoSpi
 
-CoSpi is a lightweight tool for visualizing datasets in a spiral form.
+[CoSpi](http://users.ics.forth.gr/tzitzik/demos/cospi/) is a lightweight tool for visualizing datasets in a spiral form.
 
 ## Getting Started
 
@@ -65,4 +65,9 @@ cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSV
 cospi.clusteredLOD();
 cospi.clusteredLODUniform();
 ```
+
+We provide plenty of examples and use cases in the corresponding example class.
+
+## CoSpi GUI Application
+We have developed a GUI environment to ease the use of CoSpi, which is included on this repository. To use it, run the CoSpiGUI java file.
 
