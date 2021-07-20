@@ -43,10 +43,19 @@ CoSpi cospi = new CoSpi(filepath, hasHeader);
 
 ### Classic Visualization
 ``` java
-csv.parse(); /* Parses the csv file given */
+int namesColumn = 0;
+int valuesColumn = 1;
+boolean createSVG = true;
+
+cospi.visualizePieChart(conf, valuesColumn, namesColumn, createSVG);
 ```
 
 ### Classic Visualization
 ``` java
-csv.parse(); /* Parses the csv file given */
+int namesColumn = 0;
+int valuesColumn = 1;
+int groupbyColumn = 2;
+boolean createSVG = true;
+
+cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSVG);
 ```
