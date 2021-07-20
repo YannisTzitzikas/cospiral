@@ -59,3 +59,10 @@ boolean createSVG = true;
 
 cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSVG);
 ```
+
+### Buildin Examples
+``` java
+cospi.clusteredLOD();
+cospi.clusteredLODUniform();
+```
+
