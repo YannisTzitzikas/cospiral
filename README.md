@@ -60,7 +60,27 @@ boolean createSVG = true;
 cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSVG);
 ```
 
-### Buildin Examples
+#### Pie Chart Visualization
+``` java
+int namesColumn = 0;
+int valuesColumn = 1;
+int groupbyColumn = 2;
+boolean createSVG = true;
+
+cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSVG);
+```
+
+#### File Comparison Visualization
+``` java
+String[] filenames = {"filepath1", "filepath2"};
+int[] valueColumns = {1, 1};
+int[] nameColumns = {0, 0};
+boolean createSVG = false;
+
+cospi.compareFrequencies(filenames, valueColumns, nameColumns, conf, createSVG);
+```
+
+#### Buildin Visualization
 ``` java
 cospi.clusteredLOD();
 cospi.clusteredLODUniform();
