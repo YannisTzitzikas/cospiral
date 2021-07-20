@@ -1,2 +1,2 @@
 # cospiral
-A tool that produces concentric spiral layouts
+Repository for the paper of Concentric Spiral algorithm
