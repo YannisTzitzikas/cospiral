@@ -11,7 +11,7 @@ The contents of this readme file are listed below:
 * [Usage](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#usage)
   * [Classic Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#classic-visualization)
   * [Pie Chart Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#pie-chart-visualization)
-  * [File Comparison Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#involved-people)
+  * [File Comparison Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#file-comparison-visualiztion)
   * [Demo Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#demo-visualization)
 * [Cospi GUI application](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#cospi-gui-application)
 * [Involved People](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#involved-people)
@@ -119,4 +119,6 @@ We have developed a GUI environment to ease the use of CoSpi, which is included 
 
 ## Licence
 Non commercial, attribution. 
+
+
 Copyright 2020 FOUNDATION FOR RESEARCH & TECHNOLOGY - HELLAS, All rights reserved. 
