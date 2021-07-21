@@ -9,7 +9,10 @@ The contents of this readme file are listed below:
 * [Input Dataset](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#input-dataset)
 * [Configuration](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#configuration)
 * [Usage](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#usage)
-* * aa
+  * aa
+  * bb
+  * cc
+  * dd
 * [Cospi GUI application](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#cospi-gui-application)
 * [Involved People](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#involved-people)
 
