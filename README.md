@@ -4,7 +4,14 @@
 
 ## Roadmap
 The contents of this readme file are listed below:
-* [GettingStarted](Getting)
+* [Getting Started](getting-started)
+* [Dependencies](dependencies)
+* [Input Dataset](input-dataset)
+* [Configuration](configuration)
+* [Usage](usage)
+* [Cospi GUI application](cospi-gui-application)
+* [Involved People](involved-people)
+
 
 ## Getting Started
 
