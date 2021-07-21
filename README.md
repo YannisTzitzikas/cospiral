@@ -113,8 +113,8 @@ We have developed a GUI environment to ease the use of CoSpi, which is included 
 
 
 ## Involved People
-- [Yannis Tzitzikas](tzitzik@ics.forth.gr)
-- [Manos Chatzakis](chatzakis@ics.forth.gr)
+- [Yannis Tzitzikas](https://github.com/YannisTzitzikas) - Lead Author
+- [Manos Chatzakis](https://github.com/MChatzakis) - Development
 
 
 ## Licence
