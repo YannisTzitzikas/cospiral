@@ -1,6 +1,6 @@
 # CoSpi
 
-[CoSpi](http://users.ics.forth.gr/tzitzik/demos/cospi/) is a lightweight tool for visualizing datasets in a spiral form.
+[CoSpi](http://users.ics.forth.gr/tzitzik/demos/cospi/) is a lightweight tool for visualizing datasets in a spiral form. It exploits the Concentric Spiral algorithm, which is an efficient placement algorithm designed to represent values as objects (mainly squares) in order to place them in a spiral layout.
 
 ## Roadmap
 The contents of this readme file are listed below:
@@ -121,4 +121,10 @@ We have developed a GUI environment to ease the use of CoSpi, which is included 
 Non commercial, attribution. 
 
 
-Copyright 2020 FOUNDATION FOR RESEARCH & TECHNOLOGY - HELLAS, All rights reserved. 
+Copyright 2020
+
+
+FOUNDATION FOR RESEARCH & TECHNOLOGY - HELLAS
+
+
+All rights reserved. 
