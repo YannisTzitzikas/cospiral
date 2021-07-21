@@ -9,13 +9,13 @@ The contents of this readme file are listed below:
 * [Input Dataset](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#input-dataset)
 * [Configuration](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#configuration)
 * [Usage](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#usage)
-  * aa
-  * bb
-  * cc
-  * dd
+  * [Classic Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#classic-visualization)
+  * [Pie Chart Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#pie-chart-visualization)
+  * [File Comparison Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#involved-people)
+  * [Demo Visualization](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#demo-visualization)
 * [Cospi GUI application](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#cospi-gui-application)
 * [Involved People](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#involved-people)
-
+* [Licence](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#licence)
 
 ## Getting Started
 
@@ -99,7 +99,7 @@ boolean createSVG = false;
 cospi.compareFrequencies(filenames, valueColumns, nameColumns, conf, createSVG);
 ```
 
-### Buildin Visualization
+### Demo Visualization
 Demo visualization creates a visualization for clustered LOD (Linked Open Data)
 ``` java
 cospi.clusteredLOD();
@@ -117,4 +117,6 @@ We have developed a GUI environment to ease the use of CoSpi, which is included 
 - [Manos Chatzakis](chatzakis@ics.forth.gr)
 
 
+## Licence
+Non commercial, attribution. 
 Copyright 2020 FOUNDATION FOR RESEARCH & TECHNOLOGY - HELLAS, All rights reserved. 
