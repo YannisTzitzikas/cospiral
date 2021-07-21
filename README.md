@@ -120,11 +120,4 @@ We have developed a GUI environment to ease the use of CoSpi, which is included 
 ## Licence
 Non commercial, attribution. 
 
-
-Copyright 2020
-
-
-FOUNDATION FOR RESEARCH & TECHNOLOGY - HELLAS
-
-
-All rights reserved. 
+Copyright 2020, FOUNDATION FOR RESEARCH & TECHNOLOGY - HELLAS, All rights reserved. 
