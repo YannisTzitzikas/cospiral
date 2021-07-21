@@ -4,13 +4,14 @@
 
 ## Roadmap
 The contents of this readme file are listed below:
-* [Getting Started](getting-started)
-* [Dependencies](dependencies)
-* [Input Dataset](input-dataset)
-* [Configuration](configuration)
-* [Usage](usage)
-* [Cospi GUI application](cospi-gui-application)
-* [Involved People](involved-people)
+* [Getting Started](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#getting-started)
+* [Dependencies](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#dependencies)
+* [Input Dataset](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#input-dataset)
+* [Configuration](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#configuration)
+* [Usage](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#usage)
+* * aa
+* [Cospi GUI application](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#cospi-gui-application)
+* [Involved People](https://github.com/YannisTzitzikas/cospiral/blob/master/README.md#involved-people)
 
 
 ## Getting Started
