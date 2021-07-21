@@ -4,7 +4,7 @@
 
 ## Roadmap
 The contents of this readme file are listed below:
-* [GettingStarted]
+* [GettingStarted](Getting)
 
 ## Getting Started
 
@@ -56,7 +56,7 @@ boolean hasHeader = false; /*Whether or not input file has header on the first l
 CoSpi cospi = new CoSpi(filepath, hasHeader);
 ```
 
-#### Classic Visualization
+### Classic Visualization
 Classic Visualization places the values in the classic CoSpi form.
 ``` java
 int namesColumn = 0;
@@ -66,7 +66,7 @@ boolean createSVG = true;
 cospi.visualizePieChart(conf, valuesColumn, namesColumn, createSVG);
 ```
 
-#### Pie Chart Visualization
+### Pie Chart Visualization
 Pie Chart Visualization creates a pie chart, using the CoSpi form separately for every pie.
 ``` java
 int namesColumn = 0;
@@ -77,7 +77,7 @@ boolean createSVG = true;
 cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSVG);
 ```
 
-#### File Comparison Visualization
+### File Comparison Visualization
 File Comparison Visualization creates a visualization based on the values from different files.
 ``` java
 String[] filenames = {"filepath1", "filepath2"};
@@ -88,7 +88,7 @@ boolean createSVG = false;
 cospi.compareFrequencies(filenames, valueColumns, nameColumns, conf, createSVG);
 ```
 
-#### Buildin Visualization
+### Buildin Visualization
 Demo visualization creates a visualization for clustered LOD (Linked Open Data)
 ``` java
 cospi.clusteredLOD();
