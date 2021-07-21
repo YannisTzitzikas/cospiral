@@ -2,6 +2,10 @@
 
 [CoSpi](http://users.ics.forth.gr/tzitzik/demos/cospi/) is a lightweight tool for visualizing datasets in a spiral form.
 
+## Roadmap
+The contents of this readme file are listed below:
+* [GettingStarted]
+
 ## Getting Started
 
 Before you procceed, make sure that your machine has the following requirements:
@@ -53,6 +57,7 @@ CoSpi cospi = new CoSpi(filepath, hasHeader);
 ```
 
 #### Classic Visualization
+Classic Visualization places the values in the classic CoSpi form.
 ``` java
 int namesColumn = 0;
 int valuesColumn = 1;
@@ -62,16 +67,7 @@ cospi.visualizePieChart(conf, valuesColumn, namesColumn, createSVG);
 ```
 
 #### Pie Chart Visualization
-``` java
-int namesColumn = 0;
-int valuesColumn = 1;
-int groupbyColumn = 2;
-boolean createSVG = true;
-
-cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSVG);
-```
-
-#### Pie Chart Visualization
+Pie Chart Visualization creates a pie chart, using the CoSpi form separately for every pie.
 ``` java
 int namesColumn = 0;
 int valuesColumn = 1;
@@ -82,6 +78,7 @@ cospi.visualizePieChart(conf, valuesColumn, namesColumn, groupbyColumn, createSV
 ```
 
 #### File Comparison Visualization
+File Comparison Visualization creates a visualization based on the values from different files.
 ``` java
 String[] filenames = {"filepath1", "filepath2"};
 int[] valueColumns = {1, 1};
@@ -92,6 +89,7 @@ cospi.compareFrequencies(filenames, valueColumns, nameColumns, conf, createSVG);
 ```
 
 #### Buildin Visualization
+Demo visualization creates a visualization for clustered LOD (Linked Open Data)
 ``` java
 cospi.clusteredLOD();
 cospi.clusteredLODUniform();
