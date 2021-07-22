@@ -24,3 +24,6 @@ hs_err_pid*
 /CoSpi/target/
 CoSpi/CoSpi.iml
 CoSpi/.idea/
+CoSpi/.project
+*.prefs
+CoSpi/.classpath
