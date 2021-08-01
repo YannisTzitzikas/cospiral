@@ -226,13 +226,13 @@ public class CoSpiExamples {
 
     public static void main(String[] args) {
         try {
-            syntheticCoSpiExamples();
-            classicCoSpiExamples();
-            pieChartCoSpiExamples();
-            demoCoSpiExamples();
-            zeroMinExamples();
+            //syntheticCoSpiExamples();
+            //classicCoSpiExamples();
+            //pieChartCoSpiExamples();
+            //demoCoSpiExamples();
+            //zeroMinExamples();
             veryBigCoSpiExamples();
-            comparisonExamples();
+            //comparisonExamples();
         } catch (Exception ex) {
             Logger.getLogger(CoSpiExamples.class.getName()).log(Level.SEVERE, null, ex);
         }
