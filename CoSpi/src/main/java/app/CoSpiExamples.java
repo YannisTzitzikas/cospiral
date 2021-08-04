@@ -229,9 +229,9 @@ public class CoSpiExamples {
             //syntheticCoSpiExamples();
             //classicCoSpiExamples();
             //pieChartCoSpiExamples();
-            //demoCoSpiExamples();
+            demoCoSpiExamples();
             //zeroMinExamples();
-            veryBigCoSpiExamples();
+            //veryBigCoSpiExamples();
             //comparisonExamples();
         } catch (Exception ex) {
             Logger.getLogger(CoSpiExamples.class.getName()).log(Level.SEVERE, null, ex);
