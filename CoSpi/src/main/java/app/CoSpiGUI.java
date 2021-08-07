@@ -8,12 +8,8 @@ import cospi.params.Direction;
 import cospi.params.DrawStyle;
 import cospi.params.ExpandStyle;
 import cospi.params.ShapeGaps;
-import java.awt.Color;
-import java.awt.Desktop;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Image;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -68,7 +64,7 @@ public class CoSpiGUI extends JFrame {
     FileConf fileConf = new FileConf(0, 1, 2, true);
 
     boolean fileSelected = false;
-    int RESOLUTION = 1000;
+    int RESOLUTION = 500;
 
     JMenu designMenu;
     JMenu labelsAxesMenu;
@@ -77,12 +73,18 @@ public class CoSpiGUI extends JFrame {
     JFrame parFrame;
     JTextArea consoleOutputArea;
 
+    JPanel visualizationPanel;
+    JPanel consolePanel;
+
     public CoSpiGUI() {
 
         ImageIcon icon;
+
         String path = "/icons/Image.png";
         java.net.URL imgURL = getClass().getResource(path);
+
         System.out.println(getClass());
+
         if (imgURL != null) {
             icon = new ImageIcon(imgURL, "Eikonidio"); // imgURL
             this.setIconImage(icon.getImage());
@@ -93,9 +95,17 @@ public class CoSpiGUI extends JFrame {
         System.out.println("CoSpi application started.");
 
         int WIDTH = RESOLUTION;
-        int HEIGHT = RESOLUTION + 50;
+        int HEIGHT = RESOLUTION + 300;
 
         JMenuBar menu = new JMenuBar();
+        JScrollPane scroll = new JScrollPane();
+
+        visualizationPanel = new JPanel();
+        visualizationPanel.setSize(WIDTH,HEIGHT);
+
+        //consolePanel = new JPanel();
+        //consolePanel.setSize(WIDTH,100);
+
 
         setResizable(false);
         setSize(WIDTH, HEIGHT);
@@ -105,7 +115,16 @@ public class CoSpiGUI extends JFrame {
         createMenuBar(menu);
 
         setJMenuBar(menu);
-        setLayout(null);
+
+        //setLayout(new BorderLayout());
+        setLayout(new GridLayout(2,1));
+
+        //add(scroll);
+        add(visualizationPanel);
+        //add(consolePanel);
+        createConsoleOutput(null);
+
+
         setVisible(true);
     }
 
@@ -665,7 +684,11 @@ public class CoSpiGUI extends JFrame {
                     //cospi.visualizeClassic(conf, fileConf.getValueColumn(), fileConf.nameColumn, false);
                     // Cospi.loadDataAndRunPieChart(fileConf.getFilename(), fileConf.getGroupingColumn(),  fileConf.getValueColumn(), fileConf.getNameColumn(), MIN, MAX, conf, true, false);
                 }
-                setContentPane(cospi.getPic().getJLabel());
+                //visualizationPanel = new JPanel();
+                visualizationPanel.removeAll();
+                visualizationPanel.add(cospi.getPic().getJLabel());
+                //setContentPane(cospi.getPic().getJLabel());
+                //visualizationPanel.add(cospi.getPic().getJLabel());
                 SwingUtilities.updateComponentTreeUI(this);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -707,6 +730,7 @@ public class CoSpiGUI extends JFrame {
         {
             setLayoutParameters(); // opens directly the LayoutParams frame
         }		// ytz end
+
         SwingUtilities.updateComponentTreeUI(this);
     }
 
@@ -1067,7 +1091,6 @@ public class CoSpiGUI extends JFrame {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static void saveCurrentProgress(VisConfig conf, FileConf fconf, String path) throws IOException {
 
         JSONObject cospiSave = new JSONObject();
@@ -1217,6 +1240,7 @@ public class CoSpiGUI extends JFrame {
 
     void createConsoleOutput(JPanel parentPanel) {
         JPanel consolePanel = new JPanel(new GridLayout(1, 1, 5, 5)); // rows, columns, int hgap, int vgap)
+        consolePanel.setSize(500,100);
         consolePanel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createEtchedBorder(), "Console output"));
 
