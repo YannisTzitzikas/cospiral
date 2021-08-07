@@ -74,7 +74,6 @@ public class CoSpiGUI extends JFrame {
     JTextArea consoleOutputArea;
 
     JPanel visualizationPanel;
-    JPanel consolePanel;
 
     public CoSpiGUI() {
 
@@ -1267,6 +1266,8 @@ public class CoSpiGUI extends JFrame {
         } else {
             parentPanel.add(consolePanel);
         }
+
+        redirectSystemStreams();
 
     }
 
