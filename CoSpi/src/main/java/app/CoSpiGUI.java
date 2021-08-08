@@ -97,14 +97,11 @@ public class CoSpiGUI extends JFrame {
         int HEIGHT = RESOLUTION + 300;
 
         JMenuBar menu = new JMenuBar();
-        JScrollPane scroll = new JScrollPane();
 
         visualizationPanel = new JPanel();
+
+        consoleOutputArea = new JTextArea();
         visualizationPanel.setSize(WIDTH,HEIGHT);
-
-        //consolePanel = new JPanel();
-        //consolePanel.setSize(WIDTH,100);
-
 
         setResizable(false);
         setSize(WIDTH, HEIGHT);
@@ -114,14 +111,12 @@ public class CoSpiGUI extends JFrame {
         createMenuBar(menu);
 
         setJMenuBar(menu);
-
-        //setLayout(new BorderLayout());
         setLayout(new GridLayout(2,1));
 
-        //add(scroll);
         add(visualizationPanel);
-        //add(consolePanel);
+
         createConsoleOutput(null);
+
 
 
         setVisible(true);
@@ -1238,28 +1233,21 @@ public class CoSpiGUI extends JFrame {
     }
 
     void createConsoleOutput(JPanel parentPanel) {
+
         JPanel consolePanel = new JPanel(new GridLayout(1, 1, 5, 5)); // rows, columns, int hgap, int vgap)
+
         consolePanel.setSize(500,100);
-        consolePanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createEtchedBorder(), "Console output"));
+        consolePanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "Console output"));
 
         // A: OUTPUT TEXT AREA
-        //JTextArea 
-        consoleOutputArea = new JTextArea(
-                "Console output"
-        );
-        //textOutputArea.setFont(new Font("Courier", NORMAL, 22));  //
-        //consoleOutputArea.setFont(consoleTextfont);
+        consoleOutputArea = new JTextArea("Console output");
         consoleOutputArea.setLineWrap(true);
         consoleOutputArea.setWrapStyleWord(true);
         consoleOutputArea.setEditable(false);
 
-        JScrollPane areaScrollPane = new JScrollPane(consoleOutputArea);
-        areaScrollPane.setVerticalScrollBarPolicy(
-                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        //areaScrollPane.setPreferredSize(textAreaDimension);
-
-        consolePanel.add(areaScrollPane);
+        //JScrollPane areaScrollPane = new JScrollPane(consoleOutputArea);
+        //areaScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        //consolePanel.add(areaScrollPane);
         //add(outputPanel); // adds to Frame
         if (parentPanel == null) { // if no parent panel
             this.add(consolePanel); // adds to Frame
@@ -1267,7 +1255,7 @@ public class CoSpiGUI extends JFrame {
             parentPanel.add(consolePanel);
         }
 
-        redirectSystemStreams();
+        //redirectSystemStreams();
 
     }
 
