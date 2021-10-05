@@ -109,7 +109,7 @@ cospi.clusteredLODUniform();
 We provide plenty of examples and use cases in the corresponding example class.
 
 ## CoSpi GUI Application
-We have developed a GUI environment to ease the use of CoSpi, which is included on this repository. To use it, run the CoSpiGUI java file.
+We have developed a GUI environment to ease the use of CoSpi, which is included on this repository. To use it, run the CoSpiGUI java file. Also, the jar file of the GUI is available for [download](https://github.com/YannisTzitzikas/cospiral/blob/master/Executable/CoSpi.jar).
 
 
 ## Involved People
