@@ -1,6 +1,8 @@
 # CoSpi
 
 [CoSpi](http://users.ics.forth.gr/tzitzik/demos/cospi/) is a lightweight tool for visualizing datasets in a spiral form. It exploits the Concentric Spiral algorithm, which is an efficient placement algorithm designed to represent values as objects (mainly squares) in order to place them in a spiral layout.
+More about the algorithm in the following paper: Y. Tzitzikas, ME Papadaki, and Manos Chatzakis, [A Spiral-like Method to Place in the Space (and Interact with) too Many Values](http://users.ics.forth.gr/~tzitzik/publications/Tzitzikas_2021_JIIS.pdf), Journal of Intelligent Information Systems, accepted for publication 2021, [Springer online](https://link.springer.com/article/10.1007%2Fs10844-021-00677-2)
+
 
 ## Roadmap
 The contents of this readme file are listed below:
